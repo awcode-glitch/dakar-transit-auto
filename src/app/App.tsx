@@ -285,7 +285,7 @@ function HomePage({
         <img
           src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&h=900&fit=crop&auto=format"
           alt="Port de conteneurs"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-x-0 top-0 h-[65vh] sm:h-full w-full object-cover"
         />
         <div
           className="absolute inset-0"
@@ -642,7 +642,7 @@ function TransitPage() {
         <img
           src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1400&h=500&fit=crop&auto=format"
           alt="Port de Dakar"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-x-0 top-0 h-[45vh] sm:h-full w-full object-cover"
         />
         <div
           className="absolute inset-0"
