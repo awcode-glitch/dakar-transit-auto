@@ -79,17 +79,17 @@ export function AdminLogin() {
               className="flex items-center gap-2 text-xs font-medium mb-1.5 uppercase tracking-wide"
               style={{ color: "rgba(255,255,255,0.6)" }}
             >
-              <Mail size={13} /> Email
+              <Mail size={13} /> Nom d'utilisateur ou email
             </label>
             <input
               id="admin-email"
-              type="email"
+              type="text"
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2.5 rounded-sm text-sm outline-none"
               style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff" }}
-              placeholder="admin@dakartransitauto.sn"
+              placeholder="ton.email@exemple.sn"
             />
           </div>
 
