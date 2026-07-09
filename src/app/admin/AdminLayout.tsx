@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, Link } from "react-router";
-import { LogOut } from "lucide-react";
+import { LogOut, UserCog } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import { COLORS } from "../../lib/shared";
 import { Toaster } from "../components/ui/sonner";
@@ -28,13 +28,22 @@ export function AdminLayout() {
               Espace admin — Véhicules
             </span>
           </Link>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 text-sm transition-colors"
-            style={{ color: "rgba(255,255,255,0.8)" }}
-          >
-            <LogOut size={16} /> Déconnexion
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/admin/compte"
+              className="flex items-center gap-2 text-sm transition-colors"
+              style={{ color: "rgba(255,255,255,0.8)" }}
+            >
+              <UserCog size={16} /> <span className="hidden sm:inline">Mon compte</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm transition-colors"
+              style={{ color: "rgba(255,255,255,0.8)" }}
+            >
+              <LogOut size={16} /> <span className="hidden sm:inline">Déconnexion</span>
+            </button>
+          </div>
         </div>
       </header>
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">

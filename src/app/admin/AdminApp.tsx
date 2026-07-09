@@ -6,6 +6,7 @@ import { AdminLogin } from "./AdminLogin";
 import { AdminLayout } from "./AdminLayout";
 import { VehicleList } from "./VehicleList";
 import { VehicleForm } from "./VehicleForm";
+import { AdminAccount } from "./AdminAccount";
 
 function AdminSplash() {
   return (
@@ -34,6 +35,7 @@ export default function AdminApp() {
         <Route path="vehicules" element={<VehicleList />} />
         <Route path="vehicules/nouveau" element={<VehicleForm mode="create" />} />
         <Route path="vehicules/:id" element={<VehicleForm mode="edit" />} />
+        <Route path="compte" element={<AdminAccount />} />
         <Route path="*" element={<Navigate to="vehicules" replace />} />
       </Route>
     </Routes>
