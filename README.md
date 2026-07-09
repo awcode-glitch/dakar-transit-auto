@@ -1,5 +1,5 @@
 
-  # Dakar Transit & Auto
+  # Transit Logistic International
 
   Site vitrine (transit & dédouanement) + catalogue et vente de véhicules, avec un espace admin pour gérer le catalogue.
 

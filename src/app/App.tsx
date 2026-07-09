@@ -87,13 +87,13 @@ function Header({
             className="w-9 h-9 rounded flex items-center justify-center text-xs font-bold tracking-widest"
             style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
           >
-            DTA
+            TLI
           </div>
           <span
             className="hidden sm:block text-sm font-semibold tracking-wide text-white"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            DAKAR TRANSIT & AUTO
+            TRANSIT LOGISTIC INTERNATIONAL
           </span>
         </button>
 
@@ -181,10 +181,10 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
               className="w-9 h-9 rounded flex items-center justify-center text-xs font-bold tracking-widest"
               style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
             >
-              DTA
+              TLI
             </div>
             <span className="text-white font-semibold tracking-wide" style={{ fontFamily: "var(--font-heading)" }}>
-              DAKAR TRANSIT & AUTO
+              TRANSIT LOGISTIC INTERNATIONAL
             </span>
           </div>
           <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
@@ -233,7 +233,7 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
       </div>
       <div className="border-t max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-2" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
         <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono)" }}>
-          © {new Date().getFullYear()} Dakar Transit & Auto — Déclarante en douane
+          © {new Date().getFullYear()} Transit Logistic International — Déclarante en douane
         </p>
         <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono)" }}>
           Dakar · Sénégal · Transit maritime / aérien / terrestre
@@ -1189,7 +1189,7 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
             </h2>
             <div className="space-y-4 text-sm leading-relaxed" style={{ color: "#4A5A6B" }}>
               <p>
-                Dakar Transit & Auto est née d'un constat simple : les professionnels et particuliers qui importent des marchandises ou des véhicules font face à trop d'intermédiaires — et perdent le contrôle de leur dossier à chaque relais.
+                Transit Logistic International est née d'un constat simple : les professionnels et particuliers qui importent des marchandises ou des véhicules font face à trop d'intermédiaires — et perdent le contrôle de leur dossier à chaque relais.
               </p>
               <p>
                 Déclarante en douane opérant depuis Dakar, nous avons bâti notre activité sur la maîtrise directe des procédures douanières sénégalaises et la relation de confiance avec nos clients.
@@ -1451,33 +1451,33 @@ export default function App() {
   useEffect(() => {
     const meta: Record<Page, { title: string; desc: string; keywords: string }> = {
       home: {
-        title: "Dakar Transit & Auto — Transit, Dédouanement & Vente de Véhicules à Dakar",
+        title: "Transit Logistic International — Transit, Dédouanement & Vente de Véhicules à Dakar",
         desc: "Déclarante en douane à Rufisque, Dakar. Transit maritime, aérien et terrestre. Import et vente de véhicules neufs et d'occasion. Réponse rapide sur WhatsApp.",
         keywords: "transitaire Dakar, dédouanement Sénégal, transit maritime Dakar, vente voiture Dakar, import véhicule Sénégal, déclarante en douane Rufisque",
       },
       transit: {
-        title: "Transit & Dédouanement — Dakar Transit & Auto",
+        title: "Transit & Dédouanement — Transit Logistic International",
         desc: "Services de transit et dédouanement à Dakar : maritime, aérien, terrestre. Déclarante en douane professionnelle. Zones desservies : Sénégal, Mali, Burkina, Niger, Guinée.",
         keywords: "transit douane Dakar, dédouanement marchandises Sénégal, commissionnaire douane Dakar, transit conteneur port Dakar, fret maritime aérien Sénégal",
       },
       vehicles: {
-        title: "Catalogue Véhicules — Import & Vente à Dakar | Dakar Transit & Auto",
+        title: "Catalogue Véhicules — Import & Vente à Dakar | Transit Logistic International",
         desc: "Achetez un véhicule neuf ou d'occasion importé directement à Dakar. Toyota, Mercedes, Hyundai, Peugeot et plus. Import sur commande disponible.",
         keywords: "vente voiture Dakar, achat véhicule Sénégal, importation voiture Dakar, Toyota occasion Dakar, Mercedes Sénégal, véhicule neuf Rufisque",
       },
       "vehicle-detail": {
-        title: selectedVehicle ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee} — Dakar Transit & Auto` : "Véhicule — DTA",
+        title: selectedVehicle ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee} — Transit Logistic International` : "Véhicule — TLI",
         desc: selectedVehicle ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}, ${selectedVehicle.statut}, importé depuis ${selectedVehicle.provenance}. ${fmtPrice(selectedVehicle.prix)}.` : "",
         keywords: "vente voiture Dakar, import véhicule Sénégal",
       },
       about: {
-        title: "À propos — Dakar Transit & Auto | Rufisque, Sénégal",
-        desc: "Dakar Transit & Auto, déclarante en douane basée à Rufisque. Transit et import de véhicules : une chaîne maîtrisée de bout en bout.",
+        title: "À propos — Transit Logistic International | Rufisque, Sénégal",
+        desc: "Transit Logistic International, déclarante en douane basée à Rufisque. Transit et import de véhicules : une chaîne maîtrisée de bout en bout.",
         keywords: "à propos transit Dakar, déclarante douane Rufisque, entreprise transit Sénégal",
       },
       contact: {
-        title: "Contact — Dakar Transit & Auto | WhatsApp +221 77 520 86 35",
-        desc: "Contactez Dakar Transit & Auto sur WhatsApp au +221 77 520 86 35. Basés à Rufisque, Dakar. Réponse rapide pour toute demande de transit ou de véhicule.",
+        title: "Contact — Transit Logistic International | WhatsApp +221 77 520 86 35",
+        desc: "Contactez Transit Logistic International sur WhatsApp au +221 77 520 86 35. Basés à Rufisque, Dakar. Réponse rapide pour toute demande de transit ou de véhicule.",
         keywords: "contact transitaire Dakar, WhatsApp transit Sénégal, téléphone dédouanement Dakar",
       },
     };

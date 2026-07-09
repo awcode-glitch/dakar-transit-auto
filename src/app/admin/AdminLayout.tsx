@@ -22,7 +22,7 @@ export function AdminLayout() {
               className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
               style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
             >
-              DTA
+              TLI
             </div>
             <span className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>
               Espace admin — Véhicules

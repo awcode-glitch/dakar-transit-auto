@@ -47,13 +47,13 @@ export function AdminLogin() {
             className="w-12 h-12 rounded flex items-center justify-center text-sm font-bold tracking-widest mx-auto mb-4"
             style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
           >
-            DTA
+            TLI
           </div>
           <h1 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>
             Espace administrateur
           </h1>
           <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
-            Dakar Transit & Auto
+            Transit Logistic International
           </p>
         </div>
 
