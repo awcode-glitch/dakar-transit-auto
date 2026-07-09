@@ -313,7 +313,7 @@ function HomePage({
           {/* Two CTA blocks */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
             <button
-              onClick={() => navigate("transit")}
+              onClick={() => navigate("transit", undefined, "devis")}
               className="group relative rounded-sm p-6 text-left border transition-all hover:border-opacity-60"
               style={{ background: "rgba(27,58,92,0.6)", border: `1px solid rgba(255,255,255,0.15)` }}
             >
@@ -759,7 +759,7 @@ function TransitPage() {
       </section>
 
       {/* Devis form */}
-      <section style={{ background: COLORS.blanc }} className="py-20">
+      <section id="devis" style={{ background: COLORS.blanc }} className="py-20 scroll-mt-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Demande de devis</p>
           <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
