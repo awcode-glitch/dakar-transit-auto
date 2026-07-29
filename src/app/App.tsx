@@ -93,7 +93,10 @@ function Header({
   const go = (p: Page) => { navigate(p); setOpen(false); };
 
   return (
-    <header className="sticky top-0 z-40 shadow-md" style={{ background: "#fff", borderBottom: "1px solid rgba(16,27,45,0.08)" }}>
+    <header
+      className="sticky top-0 z-40"
+      style={{ background: "#fff", borderBottom: `3px solid ${COLORS.ocre}`, boxShadow: "0 2px 16px rgba(16,27,45,0.1)" }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <button
@@ -354,7 +357,7 @@ function HomePage({
       </section>
 
       {/* Trust band */}
-      <section style={{ background: COLORS.indigo }}>
+      <section style={{ background: "#fff", borderBottom: "1px solid rgba(16,27,45,0.08)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { icon: <Shield size={20} />, ...t.trustBand[0] },
@@ -365,8 +368,8 @@ function HomePage({
             <div key={item.label} className="flex items-start gap-3">
               <div style={{ color: COLORS.ocre }}>{item.icon}</div>
               <div>
-                <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-mono)" }}>{item.label}</p>
-                <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>{item.value}</p>
+                <p className="text-xs" style={{ color: "rgba(16,27,45,0.55)", fontFamily: "var(--font-mono)" }}>{item.label}</p>
+                <p className="text-sm font-semibold" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>{item.value}</p>
               </div>
             </div>
           ))}
