@@ -5,8 +5,9 @@ import {
   Shield, Globe, CheckCircle, Package, Send,
   Car, Gauge, Calendar, ChevronDown, Loader2,
 } from "lucide-react";
-import { COLORS, wa, waVehicle, fmtPrice, fmtKm, hasPromo, type Vehicle } from "../lib/shared";
+import { COLORS, wa, fmtPrice, fmtKm, hasPromo, type Vehicle } from "../lib/shared";
 import { listVehicles } from "../lib/vehicles";
+import { LangProvider, useLang } from "../lib/LangContext";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -40,14 +41,15 @@ function SectionRouteLine() {
 // ─── Floating WhatsApp ────────────────────────────────────────────────────────
 
 function FloatingWA() {
+  const { t, lang } = useLang();
   return (
     <a
-      href={wa("Bonjour, je vous contacte depuis votre site web.")}
+      href={wa(t.wa.generic)}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full shadow-2xl text-white text-sm font-semibold transition-transform hover:scale-105 active:scale-95"
       style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
-      aria-label="Nous contacter sur WhatsApp"
+      aria-label={lang === "en" ? "Contact us on WhatsApp" : "Nous contacter sur WhatsApp"}
     >
       <MessageCircle size={20} strokeWidth={2.5} />
       <span className="hidden sm:inline">WhatsApp</span>
@@ -57,6 +59,30 @@ function FloatingWA() {
 
 // ─── Header / Nav ─────────────────────────────────────────────────────────────
 
+function LangSwitch({ compact }: { compact?: boolean }) {
+  const { lang, setLang } = useLang();
+  return (
+    <div
+      className="flex items-center rounded-sm overflow-hidden text-xs font-bold"
+      style={{ border: "1px solid rgba(255,255,255,0.25)", fontFamily: "var(--font-mono)" }}
+    >
+      {(["fr", "en"] as const).map((l) => (
+        <button
+          key={l}
+          onClick={() => setLang(l)}
+          className={compact ? "px-2 py-1.5" : "px-2.5 py-1"}
+          style={{
+            background: lang === l ? COLORS.ocre : "transparent",
+            color: lang === l ? "#fff" : "rgba(255,255,255,0.7)",
+          }}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function Header({
   current,
   navigate,
@@ -64,13 +90,14 @@ function Header({
   current: Page;
   navigate: (p: Page) => void;
 }) {
+  const { t } = useLang();
   const [open, setOpen] = useState(false);
   const links: { label: string; page: Page }[] = [
-    { label: "Accueil", page: "home" },
-    { label: "Transit", page: "transit" },
-    { label: "Véhicules", page: "vehicles" },
-    { label: "À propos", page: "about" },
-    { label: "Contact", page: "contact" },
+    { label: t.nav.home, page: "home" },
+    { label: t.nav.transit, page: "transit" },
+    { label: t.nav.vehicles, page: "vehicles" },
+    { label: t.nav.about, page: "about" },
+    { label: t.nav.contact, page: "contact" },
   ];
 
   const go = (p: Page) => { navigate(p); setOpen(false); };
@@ -84,13 +111,11 @@ function Header({
           className="flex items-center gap-3 focus:outline-none"
         >
           <div
-            className="w-9 h-9 rounded flex items-center justify-center text-xs font-bold tracking-widest"
-            style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
-          >
-            TLI
-          </div>
+            className="w-9 h-9 rounded flex-shrink-0"
+            style={{ background: COLORS.ocre }}
+          />
           <span
-            className="hidden sm:block text-sm font-semibold tracking-wide text-white"
+            className="text-xs sm:text-sm font-semibold tracking-wide text-white"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             TRANSIT LOGISTIC INTERNATIONAL
@@ -114,15 +139,16 @@ function Header({
               {l.label}
             </button>
           ))}
+          <LangSwitch />
           <a
-            href={wa("Bonjour, je souhaite vous contacter.")}
+            href={wa(t.wa.generic2)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-4 py-2 rounded text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
           >
             <MessageCircle size={16} />
-            WhatsApp
+            {t.nav.whatsapp}
           </a>
         </nav>
 
@@ -153,15 +179,18 @@ function Header({
               {l.label}
             </button>
           ))}
+          <div className="px-6 py-4">
+            <LangSwitch compact />
+          </div>
           <a
-            href={wa("Bonjour, je vous contacte depuis votre site web.")}
+            href={wa(t.wa.generic)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 mx-6 my-4 px-4 py-3 rounded text-sm font-semibold text-white justify-center"
             style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
           >
             <MessageCircle size={16} />
-            Écrire sur WhatsApp
+            {t.nav.writeOnWhatsapp}
           </a>
         </div>
       )}
@@ -172,29 +201,28 @@ function Header({
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer({ navigate }: { navigate: (p: Page) => void }) {
+  const { t } = useLang();
   return (
     <footer style={{ background: COLORS.nuit }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <div className="flex items-center gap-3 mb-4">
             <div
-              className="w-9 h-9 rounded flex items-center justify-center text-xs font-bold tracking-widest"
-              style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
-            >
-              TLI
-            </div>
+              className="w-9 h-9 rounded flex-shrink-0"
+              style={{ background: COLORS.ocre }}
+            />
             <span className="text-white font-semibold tracking-wide" style={{ fontFamily: "var(--font-heading)" }}>
               TRANSIT LOGISTIC INTERNATIONAL
             </span>
           </div>
           <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-            Déclarante en douane à Dakar. Transit maritime, aérien et terrestre. Import et vente de véhicules. Un seul interlocuteur, de l'origine à votre porte.
+            {t.footer.tagline}
           </p>
         </div>
         <div>
-          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Navigation</p>
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.footer.navTitle}</p>
           {(["home", "transit", "vehicles", "about", "contact"] as Page[]).map((p) => {
-            const labels: Record<Page, string> = { home: "Accueil", transit: "Transit & Dédouanement", vehicles: "Vente de Véhicules", "vehicle-detail": "", about: "À propos", contact: "Contact" };
+            const labels: Record<Page, string> = { ...t.footer.navLabels, "vehicle-detail": "" };
             return (
               <button
                 key={p}
@@ -208,17 +236,17 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
           })}
         </div>
         <div>
-          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Contact direct</p>
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.footer.contactTitle}</p>
           <div className="space-y-3">
             <a
-              href={wa("Bonjour, je vous contacte depuis votre site web.")}
+              href={wa(t.wa.generic)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-sm"
               style={{ color: "#25D366" }}
             >
               <MessageCircle size={15} />
-              WhatsApp (canal principal)
+              {t.footer.whatsappPrimary}
             </a>
             <a href="tel:+221775208635" className="flex items-center gap-3 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
               <Phone size={15} />
@@ -226,17 +254,17 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
             </a>
             <div className="flex items-start gap-3 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
               <MapPin size={15} className="mt-0.5 flex-shrink-0" />
-              Rufisque, Dakar — Sénégal
+              {t.footer.address}
             </div>
           </div>
         </div>
       </div>
       <div className="border-t max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-2" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
         <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono)" }}>
-          © {new Date().getFullYear()} Transit Logistic International — Déclarante en douane
+          {t.footer.copyright(new Date().getFullYear())}
         </p>
         <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono)" }}>
-          Dakar · Sénégal · Transit maritime / aérien / terrestre
+          {t.footer.tagLine}
         </p>
       </div>
     </footer>
@@ -275,6 +303,7 @@ function HomePage({
   vehicles: Vehicle[];
   vehiclesLoading: boolean;
 }) {
+  const { t } = useLang();
   return (
     <main>
       {/* Hero */}
@@ -296,16 +325,16 @@ function HomePage({
             className="inline-block text-xs tracking-widest uppercase mb-6 px-3 py-1.5 rounded-sm"
             style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}
           >
-            DÉCLARANTE EN DOUANE · DAKAR, SÉNÉGAL
+            {t.hero.badge}
           </p>
           <h1
             className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white mb-4"
             style={{ fontFamily: "var(--font-heading)", textShadow: "0 2px 12px rgba(0,0,0,0.55)" }}
           >
-            De la douane de Dakar<br />jusqu'à votre porte —
+            {t.hero.titleLine1}<br />{t.hero.titleLine2}
           </h1>
           <p className="text-xl sm:text-2xl font-medium mb-2" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "var(--font-heading)", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
-            marchandises et véhicules, un seul interlocuteur.
+            {t.hero.subtitle}
           </p>
 
           <HeroRouteLine />
@@ -319,16 +348,16 @@ function HomePage({
             >
               <div className="flex items-center gap-2 mb-3">
                 <Package size={20} style={{ color: COLORS.ocre }} />
-                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Transit</span>
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.hero.transitLabel}</span>
               </div>
               <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                Transit & Dédouanement
+                {t.hero.transitTitle}
               </h2>
               <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
-                Maritime · Aérien · Terrestre. Entreprises et particuliers.
+                {t.hero.transitDesc}
               </p>
               <div className="flex items-center gap-2 mt-4 text-sm font-semibold" style={{ color: COLORS.ocre }}>
-                Demander un devis <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                {t.hero.transitCta} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
 
@@ -339,25 +368,25 @@ function HomePage({
             >
               <div className="flex items-center gap-2 mb-3">
                 <Car size={20} style={{ color: COLORS.ocre }} />
-                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Véhicules</span>
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.hero.vehiclesLabel}</span>
               </div>
               <h2 className="text-lg font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                Vente de Véhicules
+                {t.hero.vehiclesTitle}
               </h2>
               <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
-                Neufs & occasion. Import direct, maîtrisé de bout en bout.
+                {t.hero.vehiclesDesc}
               </p>
               <div className="flex items-center gap-2 mt-4 text-sm font-semibold" style={{ color: COLORS.ocre }}>
-                Voir le catalogue <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                {t.hero.vehiclesCta} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
           </div>
 
           {/* Trust tags */}
           <div className="flex flex-wrap gap-3 mt-8">
-            {["Déclarante en douane", "Maritime · Aérien · Terrestre", "Réponse rapide sur WhatsApp"].map((t) => (
-              <span key={t} className="text-xs px-3 py-1.5 rounded-sm" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-mono)" }}>
-                {t}
+            {t.hero.tags.map((tag) => (
+              <span key={tag} className="text-xs px-3 py-1.5 rounded-sm" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-mono)" }}>
+                {tag}
               </span>
             ))}
           </div>
@@ -368,10 +397,10 @@ function HomePage({
       <section style={{ background: COLORS.indigo }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
-            { icon: <Shield size={20} />, label: "Statut professionnel", value: "Déclarante en douane" },
-            { icon: <Anchor size={20} />, label: "Maritime", value: "Tous conteneurs" },
-            { icon: <Wind size={20} />, label: "Aérien", value: "Fret express" },
-            { icon: <Truck size={20} />, label: "Terrestre", value: "Sous-région ouest-africaine" },
+            { icon: <Shield size={20} />, ...t.trustBand[0] },
+            { icon: <Anchor size={20} />, ...t.trustBand[1] },
+            { icon: <Wind size={20} />, ...t.trustBand[2] },
+            { icon: <Truck size={20} />, ...t.trustBand[3] },
           ].map((item) => (
             <div key={item.label} className="flex items-start gap-3">
               <div style={{ color: COLORS.ocre }}>{item.icon}</div>
@@ -388,9 +417,9 @@ function HomePage({
       <section style={{ background: COLORS.blanc }} className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-xl mb-12">
-            <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Nos services</p>
+            <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.services.eyebrow}</p>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-              Transit & dédouanement, toutes voies
+              {t.services.title}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -398,26 +427,23 @@ function HomePage({
               {
                 id: "maritime",
                 icon: <Anchor size={22} />,
-                title: "Maritime",
                 image: "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=600&h=400&fit=crop&auto=format",
-                items: ["Dédouanement de conteneurs FCL et LCL", "Suivi des manifestes de fret", "Coordination avec le Port Autonome de Dakar", "Import et export toutes marchandises"],
+                ...t.services.maritime,
               },
               {
                 id: "aerien",
                 icon: <Wind size={22} />,
-                title: "Aérien",
                 image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&fit=crop&auto=format",
-                items: ["Traitement des envois express et cargo", "Formalités douanières à l'AIBD", "Délais courts, suivi en temps réel", "Marchandises fragiles et haute valeur"],
+                ...t.services.aerien,
               },
               {
                 id: "terrestre",
                 icon: <Truck size={22} />,
-                title: "Terrestre",
                 image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop&auto=format",
-                items: ["Transit vers la sous-région (Mali, Burkina, Niger, Guinée)", "Documents de transit communautaire", "Coordination avec les transporteurs agréés", "Dédouanement à destination"],
+                ...t.services.terrestre,
               },
             ].map((s) => (
-              <div key={s.title} className="border rounded-sm overflow-hidden" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
+              <div key={s.id} className="border rounded-sm overflow-hidden" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
                 <div className="relative h-40 overflow-hidden">
                   <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
                   <div
@@ -442,7 +468,7 @@ function HomePage({
                     className="mt-5 text-sm font-semibold flex items-center gap-1 transition-opacity hover:opacity-70"
                     style={{ color: COLORS.indigo, fontFamily: "var(--font-heading)" }}
                   >
-                    En savoir plus <ArrowRight size={14} />
+                    {t.services.learnMore} <ArrowRight size={14} />
                   </button>
                 </div>
               </div>
@@ -457,9 +483,9 @@ function HomePage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-10">
             <div>
-              <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Catalogue</p>
+              <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.vehiclePreview.eyebrow}</p>
               <h2 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-                Véhicules disponibles
+                {t.vehiclePreview.title}
               </h2>
             </div>
             <button
@@ -467,12 +493,12 @@ function HomePage({
               className="flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-70"
               style={{ color: COLORS.indigo, fontFamily: "var(--font-heading)" }}
             >
-              Voir tout le catalogue <ArrowRight size={16} />
+              {t.vehiclePreview.viewAll} <ArrowRight size={16} />
             </button>
           </div>
           {vehiclesLoading ? (
             <div className="py-16 flex items-center justify-center gap-2 text-sm" style={{ color: "#5A6B7D" }}>
-              <Loader2 size={18} className="animate-spin" /> Chargement du catalogue…
+              <Loader2 size={18} className="animate-spin" /> {t.vehiclePreview.loading}
             </div>
           ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -488,12 +514,7 @@ function HomePage({
       <section style={{ background: COLORS.blanc }} className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { val: "—", unit: "ans", label: "d'expérience" },
-              { val: "—", unit: "dossiers", label: "dédouanés" },
-              { val: "—", unit: "véhicules", label: "livrés" },
-              { val: "4", unit: "pays", label: "de la sous-région" },
-            ].map((c) => (
+            {t.stats.items.map((c) => (
               <div key={c.label}>
                 <div className="text-3xl font-bold mb-1" style={{ fontFamily: "var(--font-mono)", color: COLORS.indigo }}>
                   {c.val} <span className="text-base font-medium" style={{ color: COLORS.ocre }}>{c.unit}</span>
@@ -503,31 +524,8 @@ function HomePage({
             ))}
           </div>
           <p className="text-center text-xs mt-6" style={{ color: "#A0AEC0", fontFamily: "var(--font-mono)" }}>
-            Chiffres à compléter — structure prête
+            {t.stats.note}
           </p>
-        </div>
-      </section>
-
-      {/* WhatsApp CTA banner */}
-      <section style={{ background: COLORS.indigo }} className="py-14">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Contact direct</p>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-            Une question ? Réponse rapide sur WhatsApp.
-          </h2>
-          <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
-            Transit, dédouanement, achat de véhicule — notre canal principal, disponible tous les jours.
-          </p>
-          <a
-            href={wa("Bonjour, je vous contacte depuis votre site. Je souhaite plus d'informations.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-6 py-4 rounded-sm text-white font-bold text-base transition-opacity hover:opacity-90"
-            style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
-          >
-            <MessageCircle size={22} />
-            Écrire maintenant sur WhatsApp
-          </a>
         </div>
       </section>
     </main>
@@ -543,6 +541,12 @@ function VehicleCard({
   vehicle: Vehicle;
   navigate: (p: Page, v?: Vehicle) => void;
 }) {
+  const { t, lang } = useLang();
+  const priceSuffix = vehicle.prix
+    ? t.wa.vehiclePriceSuffix(vehicle.prix.toLocaleString(lang === "en" ? "en-US" : "fr-FR"))
+    : "";
+  const waHref = wa(t.wa.vehicle(vehicle.marque, vehicle.modele, vehicle.annee, priceSuffix));
+
   return (
     <div
       className="bg-card rounded-sm overflow-hidden border cursor-pointer group transition-shadow hover:shadow-lg"
@@ -563,14 +567,14 @@ function VehicleCard({
             fontFamily: "var(--font-mono)",
           }}
         >
-          {vehicle.statut === "neuf" ? "Neuf" : "Occasion"}
+          {vehicle.statut === "neuf" ? t.vehicleCard.neuf : t.vehicleCard.occasion}
         </span>
         {hasPromo(vehicle) && (
           <span
             className="absolute top-3 right-3 text-xs px-2 py-1 rounded-sm font-bold"
             style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
           >
-            PROMO
+            {t.vehicleCard.promo}
           </span>
         )}
       </div>
@@ -582,7 +586,7 @@ function VehicleCard({
         </div>
         <div className="flex items-center gap-3 text-xs mb-3" style={{ fontFamily: "var(--font-mono)", color: "#5A6B7D" }}>
           <span className="flex items-center gap-1"><Calendar size={11} />{vehicle.annee}</span>
-          <span className="flex items-center gap-1"><Gauge size={11} />{fmtKm(vehicle.kilometrage)}</span>
+          <span className="flex items-center gap-1"><Gauge size={11} />{fmtKm(vehicle.kilometrage, lang)}</span>
         </div>
         <ProvenanceBadge from={vehicle.provenance} />
         <div className="mt-3 pt-3 border-t flex justify-between items-center" style={{ borderColor: "rgba(27,58,92,0.08)" }}>
@@ -592,22 +596,22 @@ function VehicleCard({
                 className="block text-xs line-through"
                 style={{ fontFamily: "var(--font-mono)", color: "#A0AEC0" }}
               >
-                {fmtPrice(vehicle.prixBarre)}
+                {fmtPrice(vehicle.prixBarre, lang)}
               </span>
             )}
             <span
               className="font-bold text-base"
               style={{ fontFamily: "var(--font-mono)", color: vehicle.prix == null ? "#5A6B7D" : hasPromo(vehicle) ? COLORS.ocre : COLORS.indigo }}
             >
-              {fmtPrice(vehicle.prix)}
+              {fmtPrice(vehicle.prix, lang)}
             </span>
           </div>
           <span className="text-xs font-medium flex items-center gap-1" style={{ color: COLORS.ocre }}>
-            Détail <ArrowRight size={12} />
+            {t.vehicleCard.detail} <ArrowRight size={12} />
           </span>
         </div>
         <a
-          href={waVehicle(vehicle)}
+          href={waHref}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -615,7 +619,7 @@ function VehicleCard({
           style={{ background: "#25D366" }}
         >
           <MessageCircle size={15} />
-          Contacter
+          {t.vehicleCard.contact}
         </a>
       </div>
     </div>
@@ -625,15 +629,23 @@ function VehicleCard({
 // ─── TRANSIT PAGE ─────────────────────────────────────────────────────────────
 
 function TransitPage() {
+  const { t } = useLang();
   const [form, setForm] = useState({ type: "", origine: "", mode: "maritime", nom: "", contact: "" });
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Bonjour, je sollicite un devis pour le dédouanement de la marchandise suivante :\n\n• Type de marchandise : ${form.type}\n• Origine : ${form.origine}\n• Mode de transport : ${form.mode}\n• Nom : ${form.nom}\n• Contact : ${form.contact}\n\nMerci de revenir vers moi.`;
+    const modeLabel = form.mode === "maritime" ? t.transitPage.devisForm.modeMaritime : form.mode === "aérien" ? t.transitPage.devisForm.modeAerien : t.transitPage.devisForm.modeTerrestre;
+    const msg = t.wa.devis(form.type, form.origine, modeLabel, form.nom, form.contact);
     window.open(wa(msg), "_blank");
     setSent(true);
   };
+
+  const services = [
+    { id: "maritime", icon: <Anchor size={32} />, ...t.transitPage.whatWeDo.maritime },
+    { id: "aerien", icon: <Wind size={32} />, ...t.transitPage.whatWeDo.aerien },
+    { id: "terrestre", icon: <Truck size={32} />, ...t.transitPage.whatWeDo.terrestre },
+  ];
 
   return (
     <main>
@@ -650,13 +662,13 @@ function TransitPage() {
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
           <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>
-            SERVICES
+            {t.transitPage.hero.eyebrow}
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)", textShadow: "0 2px 12px rgba(0,0,0,0.55)" }}>
-            Transit &<br />Dédouanement
+            {t.transitPage.hero.titleLine1}<br />{t.transitPage.hero.titleLine2}
           </h1>
           <p className="text-lg max-w-xl" style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
-            Marchandises importées ou exportées, par voie maritime, aérienne ou terrestre — nous gérons l'ensemble des formalités douanières pour votre compte.
+            {t.transitPage.hero.desc}
           </p>
         </div>
       </section>
@@ -668,10 +680,10 @@ function TransitPage() {
             <Shield size={20} className="mt-0.5 flex-shrink-0" style={{ color: COLORS.vert }} />
             <div>
               <p className="font-semibold text-sm mb-1" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-                Déclarante en douane — statut professionnel reconnu
+                {t.transitPage.statusBox.title}
               </p>
               <p className="text-sm" style={{ color: "#5A6B7D" }}>
-                En qualité de déclarante en douane, nous maîtrisons l'ensemble des procédures douanières sénégalaises et assurons un suivi rigoureux de chaque dossier — de la déclaration en détail jusqu'à la mainlevée. Votre marchandise est entre des mains professionnelles.
+                {t.transitPage.statusBox.desc}
               </p>
             </div>
           </div>
@@ -681,45 +693,10 @@ function TransitPage() {
       {/* Services trois colonnes */}
       <section style={{ background: COLORS.blanc }} className="py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <p className="text-xs tracking-widest uppercase mb-10" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Ce que nous faisons</p>
+          <p className="text-xs tracking-widest uppercase mb-10" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.transitPage.whatWeDo.eyebrow}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                id: "maritime",
-                icon: <Anchor size={32} />,
-                title: "Maritime",
-                detail: [
-                  "Dédouanement de conteneurs FCL (plein) et LCL (groupage)",
-                  "Traitement des déclarations en détail au Port de Dakar",
-                  "Coordination avec les compagnies maritimes et consignataires",
-                  "Import de tous types : matériaux, équipements, biens de consommation",
-                  "Export marchandises toutes destinations",
-                ],
-              },
-              {
-                id: "aerien",
-                icon: <Wind size={32} />,
-                title: "Aérien",
-                detail: [
-                  "Prise en charge des formalités à l'AIBD (Aéroport Blaise Diagne)",
-                  "Gestion des lettres de transport aérien (LTA)",
-                  "Traitement express des envois urgents",
-                  "Idéal pour marchandises fragiles, haute valeur ou délais contraints",
-                ],
-              },
-              {
-                id: "terrestre",
-                icon: <Truck size={32} />,
-                title: "Terrestre",
-                detail: [
-                  "Transit douanier vers Mali, Burkina Faso, Niger, Guinée",
-                  "Documents de transit communautaire CEDEAO",
-                  "Coordination avec les transporteurs routiers agréés",
-                  "Dédouanement de bout en bout jusqu'à destination finale",
-                ],
-              },
-            ].map((s) => (
-              <div key={s.title} id={s.id} className="p-6 border rounded-sm scroll-mt-20" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
+            {services.map((s) => (
+              <div key={s.id} id={s.id} className="p-6 border rounded-sm scroll-mt-20" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
                 <div className="mb-4" style={{ color: COLORS.indigo }}>{s.icon}</div>
                 <h3 className="text-xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>{s.title}</h3>
                 <ul className="space-y-3">
@@ -740,12 +717,12 @@ function TransitPage() {
       {/* Zones desservies */}
       <section style={{ background: COLORS.brume }} className="py-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Zones desservies</p>
+          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.transitPage.zones.eyebrow}</p>
           <h2 className="text-2xl font-bold mb-8" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-            De Dakar vers toute la sous-région
+            {t.transitPage.zones.title}
           </h2>
           <div className="flex flex-wrap gap-3">
-            {["Sénégal", "Mali", "Burkina Faso", "Niger", "Guinée", "Guinée-Bissau"].map((pays) => (
+            {t.transitPage.zones.list.map((pays) => (
               <div key={pays} className="flex items-center gap-2 px-4 py-2.5 rounded-sm bg-white border text-sm font-medium" style={{ borderColor: "rgba(27,58,92,0.12)", color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>
                 <Globe size={14} style={{ color: COLORS.indigo }} />
                 {pays}
@@ -753,7 +730,7 @@ function TransitPage() {
             ))}
           </div>
           <p className="text-xs mt-4" style={{ color: "#A0AEC0", fontFamily: "var(--font-mono)" }}>
-            * Destinations à confirmer — liste indicative basée sur les flux habituels au départ du Port de Dakar
+            {t.transitPage.zones.note}
           </p>
         </div>
       </section>
@@ -761,27 +738,27 @@ function TransitPage() {
       {/* Devis form */}
       <section id="devis" style={{ background: COLORS.blanc }} className="py-20 scroll-mt-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
-          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Demande de devis</p>
+          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.transitPage.devisForm.eyebrow}</p>
           <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-            Demandez votre devis transit
+            {t.transitPage.devisForm.title}
           </h2>
           <p className="text-sm mb-8" style={{ color: "#5A6B7D" }}>
-            Remplissez ce formulaire — il s'ouvrira directement dans WhatsApp avec votre demande pré-remplie.
+            {t.transitPage.devisForm.desc}
           </p>
           {sent ? (
             <div className="p-6 rounded-sm text-center border" style={{ borderColor: COLORS.vert, background: "#f0faf8" }}>
               <CheckCircle size={32} className="mx-auto mb-3" style={{ color: COLORS.vert }} />
-              <p className="font-semibold" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>Votre demande a été ouverte dans WhatsApp.</p>
-              <p className="text-sm mt-1" style={{ color: "#5A6B7D" }}>Envoyez le message pour recevoir votre devis rapidement.</p>
-              <button onClick={() => setSent(false)} className="mt-4 text-sm underline" style={{ color: COLORS.indigo }}>Nouvelle demande</button>
+              <p className="font-semibold" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{t.transitPage.devisForm.sentTitle}</p>
+              <p className="text-sm mt-1" style={{ color: "#5A6B7D" }}>{t.transitPage.devisForm.sentDesc}</p>
+              <button onClick={() => setSent(false)} className="mt-4 text-sm underline" style={{ color: COLORS.indigo }}>{t.transitPage.devisForm.newRequest}</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               {[
-                { label: "Type de marchandise", key: "type", placeholder: "Ex : équipements électroniques, produits alimentaires…" },
-                { label: "Origine (pays / ville)", key: "origine", placeholder: "Ex : Chine — Shanghai, France — Le Havre…" },
-                { label: "Votre nom", key: "nom", placeholder: "Prénom et nom" },
-                { label: "Téléphone ou email", key: "contact", placeholder: "+221 77 000 00 00" },
+                { label: t.transitPage.devisForm.typeLabel, key: "type", placeholder: t.transitPage.devisForm.typePlaceholder },
+                { label: t.transitPage.devisForm.originLabel, key: "origine", placeholder: t.transitPage.devisForm.originPlaceholder },
+                { label: t.transitPage.devisForm.nameLabel, key: "nom", placeholder: t.transitPage.devisForm.namePlaceholder },
+                { label: t.transitPage.devisForm.contactLabel, key: "contact", placeholder: t.transitPage.devisForm.contactPlaceholder },
               ].map((field) => (
                 <div key={field.key}>
                   <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>
@@ -800,7 +777,7 @@ function TransitPage() {
               ))}
               <div>
                 <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>
-                  Mode de transport
+                  {t.transitPage.devisForm.modeLabel}
                 </label>
                 <div className="relative">
                   <select
@@ -809,9 +786,9 @@ function TransitPage() {
                     className="w-full px-4 py-3 rounded-sm text-sm border outline-none appearance-none"
                     style={{ borderColor: "rgba(27,58,92,0.2)", background: COLORS.brume, color: COLORS.nuit, fontFamily: "var(--font-body)" }}
                   >
-                    <option value="maritime">Maritime (conteneur)</option>
-                    <option value="aérien">Aérien (cargo / express)</option>
-                    <option value="terrestre">Terrestre (sous-région)</option>
+                    <option value="maritime">{t.transitPage.devisForm.modeMaritime}</option>
+                    <option value="aérien">{t.transitPage.devisForm.modeAerien}</option>
+                    <option value="terrestre">{t.transitPage.devisForm.modeTerrestre}</option>
                   </select>
                   <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#5A6B7D" }} />
                 </div>
@@ -822,7 +799,7 @@ function TransitPage() {
                 style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
               >
                 <MessageCircle size={20} />
-                Envoyer via WhatsApp
+                {t.transitPage.devisForm.submit}
               </button>
             </form>
           )}
@@ -847,6 +824,7 @@ function VehiclesPage({
   vehiclesError: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useLang();
   const [statut, setStatut] = useState<"tous" | "neuf" | "occasion">("tous");
   const [marque, setMarque] = useState("Toutes");
   const [orderBy, setOrderBy] = useState<"default" | "asc" | "desc">("default");
@@ -866,7 +844,7 @@ function VehiclesPage({
 
   const handleOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Bonjour, je souhaite une importation de véhicule sur commande :\n\n• Marque / Modèle souhaité : ${orderForm.marque} ${orderForm.modele}\n• Budget indicatif : ${orderForm.budget}\n• Délai souhaité : ${orderForm.delai}\n• Contact : ${orderForm.contact}\n\nMerci de revenir vers moi.`;
+    const msg = t.wa.order(orderForm.marque, orderForm.modele, orderForm.budget, orderForm.delai, orderForm.contact);
     window.open(wa(msg), "_blank");
     setOrderSent(true);
   };
@@ -885,12 +863,12 @@ function VehiclesPage({
           style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
-          <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>CATALOGUE</p>
+          <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>{t.vehiclesPage.hero.eyebrow}</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)", textShadow: "0 2px 12px rgba(0,0,0,0.55)" }}>
-            Vente de Véhicules
+            {t.vehiclesPage.hero.title}
           </h1>
           <p className="text-lg max-w-xl" style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
-            Véhicules neufs et d'occasion importés directement. Maîtrise de toute la chaîne — de l'origine à Dakar.
+            {t.vehiclesPage.hero.desc}
           </p>
         </div>
       </section>
@@ -910,7 +888,7 @@ function VehiclesPage({
                   fontFamily: "var(--font-heading)",
                 }}
               >
-                {s === "tous" ? "Tous" : s.charAt(0).toUpperCase() + s.slice(1)}
+                {s === "tous" ? t.vehiclesPage.filters.all : s === "neuf" ? t.vehiclesPage.filters.neuf : t.vehiclesPage.filters.occasion}
               </button>
             ))}
           </div>
@@ -922,7 +900,7 @@ function VehiclesPage({
               className="pl-3 pr-8 py-2 rounded-sm border text-sm appearance-none"
               style={{ borderColor: "rgba(27,58,92,0.15)", background: "#fff", color: COLORS.nuit, fontFamily: "var(--font-body)" }}
             >
-              {marques.map((m) => <option key={m}>{m}</option>)}
+              {marques.map((m) => <option key={m} value={m}>{m === "Toutes" ? t.vehiclesPage.filters.allBrands : m}</option>)}
             </select>
             <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#5A6B7D" }} />
           </div>
@@ -934,15 +912,15 @@ function VehiclesPage({
               className="pl-3 pr-8 py-2 rounded-sm border text-sm appearance-none"
               style={{ borderColor: "rgba(27,58,92,0.15)", background: "#fff", color: COLORS.nuit, fontFamily: "var(--font-body)" }}
             >
-              <option value="default">Tri par défaut</option>
-              <option value="asc">Prix croissant</option>
-              <option value="desc">Prix décroissant</option>
+              <option value="default">{t.vehiclesPage.filters.sortDefault}</option>
+              <option value="asc">{t.vehiclesPage.filters.sortAsc}</option>
+              <option value="desc">{t.vehiclesPage.filters.sortDesc}</option>
             </select>
             <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#5A6B7D" }} />
           </div>
 
           <span className="text-sm ml-auto" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>
-            {filtered.length} véhicule{filtered.length !== 1 ? "s" : ""}
+            {t.vehiclesPage.filters.count(filtered.length)}
           </span>
         </div>
       </section>
@@ -952,19 +930,19 @@ function VehiclesPage({
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           {vehiclesLoading ? (
             <div className="py-20 flex items-center justify-center gap-2 text-sm" style={{ color: "#5A6B7D" }}>
-              <Loader2 size={18} className="animate-spin" /> Chargement du catalogue…
+              <Loader2 size={18} className="animate-spin" /> {t.vehiclesPage.grid.loading}
             </div>
           ) : vehiclesError ? (
             <div className="text-center py-20 rounded-sm border" style={{ borderColor: "rgba(220,60,60,0.3)", background: "#fff5f5" }}>
               <p className="text-sm mb-3" style={{ color: "#b23b3b" }}>{vehiclesError}</p>
-              <button onClick={onRetry} className="text-sm underline" style={{ color: COLORS.indigo }}>Réessayer</button>
+              <button onClick={onRetry} className="text-sm underline" style={{ color: COLORS.indigo }}>{t.vehiclesPage.grid.retry}</button>
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-20" style={{ color: "#5A6B7D" }}>
               <Car size={40} className="mx-auto mb-4 opacity-30" />
-              <p className="font-medium" style={{ fontFamily: "var(--font-heading)" }}>Aucun véhicule pour ces critères.</p>
+              <p className="font-medium" style={{ fontFamily: "var(--font-heading)" }}>{t.vehiclesPage.grid.empty}</p>
               <button onClick={() => { setStatut("tous"); setMarque("Toutes"); }} className="mt-3 text-sm underline" style={{ color: COLORS.indigo }}>
-                Réinitialiser les filtres
+                {t.vehiclesPage.grid.reset}
               </button>
             </div>
           ) : (
@@ -978,25 +956,25 @@ function VehiclesPage({
       {/* Import sur commande */}
       <section style={{ background: COLORS.brume }} className="py-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
-          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Import sur commande</p>
+          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.vehiclesPage.orderForm.eyebrow}</p>
           <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-            Le véhicule idéal n'est pas encore en stock ?
+            {t.vehiclesPage.orderForm.title}
           </h2>
           <p className="text-sm mb-8" style={{ color: "#5A6B7D" }}>
-            Nous pouvons sourcer et importer le véhicule exact que vous recherchez — avec la même maîtrise de la chaîne d'import que pour nos véhicules en stock.
+            {t.vehiclesPage.orderForm.desc}
           </p>
           {orderSent ? (
             <div className="p-6 rounded-sm text-center border" style={{ borderColor: COLORS.vert, background: "#f0faf8" }}>
               <CheckCircle size={32} className="mx-auto mb-3" style={{ color: COLORS.vert }} />
-              <p className="font-semibold" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>Votre demande a été ouverte dans WhatsApp.</p>
-              <button onClick={() => setOrderSent(false)} className="mt-4 text-sm underline" style={{ color: COLORS.indigo }}>Nouvelle demande</button>
+              <p className="font-semibold" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{t.vehiclesPage.orderForm.sentTitle}</p>
+              <button onClick={() => setOrderSent(false)} className="mt-4 text-sm underline" style={{ color: COLORS.indigo }}>{t.vehiclesPage.orderForm.newRequest}</button>
             </div>
           ) : (
             <form onSubmit={handleOrder} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { key: "marque", label: "Marque souhaitée", placeholder: "Ex : Toyota" },
-                  { key: "modele", label: "Modèle souhaité", placeholder: "Ex : Prado" },
+                  { key: "marque", label: t.vehiclesPage.orderForm.brandLabel, placeholder: t.vehiclesPage.orderForm.brandPlaceholder },
+                  { key: "modele", label: t.vehiclesPage.orderForm.modelLabel, placeholder: t.vehiclesPage.orderForm.modelPlaceholder },
                 ].map((f) => (
                   <div key={f.key}>
                     <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{f.label}</label>
@@ -1013,9 +991,9 @@ function VehiclesPage({
                 ))}
               </div>
               {[
-                { key: "budget", label: "Budget indicatif (FCFA)", placeholder: "Ex : 20 000 000 FCFA" },
-                { key: "delai", label: "Délai souhaité", placeholder: "Ex : 3 mois" },
-                { key: "contact", label: "Votre contact (WhatsApp ou email)", placeholder: "+221 77 …" },
+                { key: "budget", label: t.vehiclesPage.orderForm.budgetLabel, placeholder: t.vehiclesPage.orderForm.budgetPlaceholder },
+                { key: "delai", label: t.vehiclesPage.orderForm.delayLabel, placeholder: t.vehiclesPage.orderForm.delayPlaceholder },
+                { key: "contact", label: t.vehiclesPage.orderForm.contactLabel, placeholder: t.vehiclesPage.orderForm.contactPlaceholder },
               ].map((f) => (
                 <div key={f.key}>
                   <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{f.label}</label>
@@ -1036,7 +1014,7 @@ function VehiclesPage({
                 style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
               >
                 <MessageCircle size={20} />
-                Soumettre ma demande via WhatsApp
+                {t.vehiclesPage.orderForm.submit}
               </button>
             </form>
           )}
@@ -1055,6 +1033,12 @@ function VehicleDetailPage({
   vehicle: Vehicle;
   navigate: (p: Page) => void;
 }) {
+  const { t, lang } = useLang();
+  const priceSuffix = vehicle.prix
+    ? t.wa.vehiclePriceSuffix(vehicle.prix.toLocaleString(lang === "en" ? "en-US" : "fr-FR"))
+    : "";
+  const waHref = wa(t.wa.vehicle(vehicle.marque, vehicle.modele, vehicle.annee, priceSuffix));
+
   return (
     <main className="py-10" style={{ background: COLORS.blanc }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
@@ -1065,7 +1049,7 @@ function VehicleDetailPage({
           style={{ color: COLORS.indigo, fontFamily: "var(--font-heading)" }}
         >
           <ChevronLeft size={16} />
-          Retour au catalogue
+          {t.vehicleDetail.back}
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -1083,7 +1067,7 @@ function VehicleDetailPage({
                 className="text-xs px-3 py-1 rounded-sm font-semibold"
                 style={{ background: vehicle.statut === "neuf" ? COLORS.vert : COLORS.indigo, color: "#fff", fontFamily: "var(--font-mono)" }}
               >
-                {vehicle.statut === "neuf" ? "Neuf" : "Occasion"}
+                {vehicle.statut === "neuf" ? t.vehicleCard.neuf : t.vehicleCard.occasion}
               </span>
               <ProvenanceBadge from={vehicle.provenance} />
               {hasPromo(vehicle) && (
@@ -1091,7 +1075,7 @@ function VehicleDetailPage({
                   className="text-xs px-3 py-1 rounded-sm font-bold"
                   style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}
                 >
-                  PROMO
+                  {t.vehicleCard.promo}
                 </span>
               )}
             </div>
@@ -1103,25 +1087,25 @@ function VehicleDetailPage({
               {vehicle.marque} {vehicle.modele}
             </h1>
             <p className="text-sm mb-6" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>
-              {vehicle.annee} · {fmtKm(vehicle.kilometrage)}
+              {vehicle.annee} · {fmtKm(vehicle.kilometrage, lang)}
             </p>
 
             {/* Price */}
             <div className="mb-6 p-4 rounded-sm border-l-4" style={{ background: COLORS.brume, borderLeftColor: COLORS.ocre }}>
-              <p className="text-xs mb-1" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>Prix</p>
+              <p className="text-xs mb-1" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>{t.vehicleDetail.price}</p>
               {hasPromo(vehicle) && (
                 <p className="text-sm line-through mb-0.5" style={{ fontFamily: "var(--font-mono)", color: "#A0AEC0" }}>
-                  {fmtPrice(vehicle.prixBarre)}
+                  {fmtPrice(vehicle.prixBarre, lang)}
                 </p>
               )}
               <p className="text-2xl font-bold" style={{ fontFamily: "var(--font-mono)", color: !vehicle.prix ? "#5A6B7D" : hasPromo(vehicle) ? COLORS.ocre : COLORS.nuit }}>
-                {fmtPrice(vehicle.prix)}
+                {fmtPrice(vehicle.prix, lang)}
               </p>
             </div>
 
             {/* Specs table */}
             <div className="mb-6">
-              <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Fiche technique</p>
+              <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.vehicleDetail.specs}</p>
               <div className="divide-y rounded-sm overflow-hidden border" style={{ borderColor: "rgba(27,58,92,0.1)", divideColor: "rgba(27,58,92,0.08)" }}>
                 {Object.entries(vehicle.specs).map(([key, val]) => (
                   <div key={key} className="flex justify-between px-4 py-2.5 text-sm" style={{ fontFamily: "var(--font-mono)" }}>
@@ -1137,17 +1121,17 @@ function VehicleDetailPage({
 
             {/* CTA */}
             <a
-              href={waVehicle(vehicle)}
+              href={waHref}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 w-full py-4 rounded-sm font-bold text-white text-base transition-opacity hover:opacity-90"
               style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
             >
               <MessageCircle size={22} />
-              Je suis intéressé(e) — Contacter sur WhatsApp
+              {t.vehicleDetail.interested}
             </a>
             <p className="text-center text-xs mt-3" style={{ color: "#A0AEC0" }}>
-              Le message sera pré-rempli avec les détails de ce véhicule.
+              {t.vehicleDetail.note}
             </p>
           </div>
         </div>
@@ -1159,11 +1143,13 @@ function VehicleDetailPage({
 // ─── ABOUT PAGE ───────────────────────────────────────────────────────────────
 
 function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
+  const { t } = useLang();
+  const differenceIcons = [<Shield size={18} />, <Globe size={18} />, <MessageCircle size={18} />, <Truck size={18} />];
   return (
     <main>
       <section className="relative min-h-[50vh] flex flex-col justify-center overflow-hidden" style={{ background: COLORS.indigo }}>
         <img
-          src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&h=700&fit=crop&auto=format"
+          src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600&h=700&fit=crop&auto=format"
           alt="Partenariat professionnel"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: "center 20%" }}
@@ -1173,9 +1159,9 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
           style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-16">
-          <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>À PROPOS</p>
+          <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>{t.aboutPage.hero.eyebrow}</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)", textShadow: "0 2px 12px rgba(0,0,0,0.55)" }}>
-            Un seul interlocuteur.<br />Toute la chaîne.
+            {t.aboutPage.hero.titleLine1}<br />{t.aboutPage.hero.titleLine2}
           </h1>
         </div>
       </section>
@@ -1183,37 +1169,26 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
       <section style={{ background: COLORS.blanc }} className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-14">
           <div>
-            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Notre histoire</p>
+            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.aboutPage.story.eyebrow}</p>
             <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-              Née à Dakar, ancrée dans le commerce réel
+              {t.aboutPage.story.title}
             </h2>
             <div className="space-y-4 text-sm leading-relaxed" style={{ color: "#4A5A6B" }}>
-              <p>
-                Transit Logistic International est née d'un constat simple : les professionnels et particuliers qui importent des marchandises ou des véhicules font face à trop d'intermédiaires — et perdent le contrôle de leur dossier à chaque relais.
-              </p>
-              <p>
-                Déclarante en douane opérant depuis Dakar, nous avons bâti notre activité sur la maîtrise directe des procédures douanières sénégalaises et la relation de confiance avec nos clients.
-              </p>
-              <p>
-                L'activité véhicules est née naturellement : en gérant nous-mêmes le transit de nos propres imports, nous garantissons des délais prévisibles, une traçabilité complète — et aucun surcoût caché.
-              </p>
+              {t.aboutPage.story.paragraphs.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
             </div>
           </div>
 
           <div>
-            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Notre différence</p>
+            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.aboutPage.difference.eyebrow}</p>
             <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-              Pourquoi nous choisir
+              {t.aboutPage.difference.title}
             </h2>
             <div className="space-y-4">
-              {[
-                { icon: <Shield size={18} />, title: "Maîtrise des procédures douanières", desc: "Déclarantes en douane — chaque dossier est suivi de la déclaration à la mainlevée." },
-                { icon: <Globe size={18} />, title: "Chaîne d'import intégrée", desc: "Pour nos véhicules, nous gérons l'origine, le transport et le dédouanement sans sous-traitance." },
-                { icon: <MessageCircle size={18} />, title: "Réponse rapide, contact direct", desc: "WhatsApp comme canal principal — vous parlez directement à la personne qui gère votre dossier." },
-                { icon: <Truck size={18} />, title: "Couverture sous-régionale", desc: "Capacité à acheminer vos marchandises jusqu'à destination finale dans la sous-région." },
-              ].map((item) => (
+              {t.aboutPage.difference.items.map((item, i) => (
                 <div key={item.title} className="flex items-start gap-4 p-4 rounded-sm border" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
-                  <div className="mt-0.5 flex-shrink-0" style={{ color: COLORS.indigo }}>{item.icon}</div>
+                  <div className="mt-0.5 flex-shrink-0" style={{ color: COLORS.indigo }}>{differenceIcons[i]}</div>
                   <div>
                     <p className="font-semibold text-sm mb-1" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>{item.title}</p>
                     <p className="text-sm" style={{ color: "#5A6B7D" }}>{item.desc}</p>
@@ -1228,10 +1203,10 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
 
         {/* Testimonials placeholder */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Témoignages</p>
+          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.aboutPage.testimonials.eyebrow}</p>
           <div className="p-6 rounded-sm border border-dashed text-center" style={{ borderColor: "rgba(27,58,92,0.2)" }}>
             <p className="text-sm" style={{ color: "#A0AEC0", fontFamily: "var(--font-mono)" }}>
-              Espace réservé — les témoignages clients seront ajoutés ici dès disponibilité
+              {t.aboutPage.testimonials.placeholder}
             </p>
           </div>
         </div>
@@ -1242,7 +1217,7 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-sm font-bold text-white transition-opacity hover:opacity-90"
             style={{ background: COLORS.indigo, fontFamily: "var(--font-heading)" }}
           >
-            Nous contacter <ArrowRight size={16} />
+            {t.aboutPage.cta} <ArrowRight size={16} />
           </button>
         </div>
       </section>
@@ -1253,12 +1228,13 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
 // ─── CONTACT PAGE ─────────────────────────────────────────────────────────────
 
 function ContactPage() {
+  const { t } = useLang();
   const [form, setForm] = useState({ nom: "", sujet: "", message: "" });
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Bonjour, je vous écris depuis votre site web.\n\nNom : ${form.nom}\nSujet : ${form.sujet}\n\n${form.message}`;
+    const msg = t.wa.contactForm(form.nom, form.sujet, form.message);
     window.open(wa(msg), "_blank");
     setSent(true);
   };
@@ -1267,7 +1243,7 @@ function ContactPage() {
     <main>
       <section className="relative min-h-[45vh] flex flex-col justify-center overflow-hidden" style={{ background: COLORS.indigo }}>
         <img
-          src="https://images.unsplash.com/photo-1560264357-8d9202250f21?w=1600&h=700&fit=crop&auto=format"
+          src="https://images.unsplash.com/photo-1573164574397-dd250bc8a598?w=1600&h=700&fit=crop&auto=format"
           alt="Équipe en action"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: "center 20%" }}
@@ -1277,12 +1253,12 @@ function ContactPage() {
           style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-16">
-          <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>CONTACT</p>
+          <p className="inline-block text-xs tracking-widest uppercase mb-4 px-3 py-1.5 rounded-sm" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}>{t.contactPage.hero.eyebrow}</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-heading)", textShadow: "0 2px 12px rgba(0,0,0,0.55)" }}>
-            Contactez-nous
+            {t.contactPage.hero.title}
           </h1>
           <p className="text-lg max-w-xl" style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
-            Notre canal principal est WhatsApp. C'est le moyen le plus rapide d'obtenir une réponse.
+            {t.contactPage.hero.desc}
           </p>
         </div>
       </section>
@@ -1293,7 +1269,7 @@ function ContactPage() {
           <div>
             {/* WhatsApp — primary */}
             <a
-              href={wa("Bonjour, je vous contacte depuis votre site web.")}
+              href={wa(t.wa.generic)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-5 p-6 rounded-sm mb-5 transition-opacity hover:opacity-90 group"
@@ -1303,8 +1279,8 @@ function ContactPage() {
                 <MessageCircle size={28} style={{ color: "#25D366" }} />
               </div>
               <div>
-                <p className="text-white font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>WhatsApp</p>
-                <p className="text-white text-sm" style={{ opacity: 0.85 }}>Canal principal — Réponse rapide</p>
+                <p className="text-white font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>{t.contactPage.whatsapp.title}</p>
+                <p className="text-white text-sm" style={{ opacity: 0.85 }}>{t.contactPage.whatsapp.subtitle}</p>
                 <p className="text-white text-sm font-semibold mt-1" style={{ fontFamily: "var(--font-mono)" }}>+221 77 520 86 35</p>
               </div>
             </a>
@@ -1314,54 +1290,54 @@ function ContactPage() {
               <div className="flex items-center gap-4 p-4 rounded-sm border" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
                 <Phone size={20} style={{ color: COLORS.indigo }} />
                 <div>
-                  <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>Téléphone</p>
+                  <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>{t.contactPage.phone}</p>
                   <a href="tel:+221775208635" className="font-semibold text-sm" style={{ color: COLORS.nuit, fontFamily: "var(--font-mono)" }}>+221 77 520 86 35</a>
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 rounded-sm border" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
                 <Mail size={20} style={{ color: COLORS.indigo }} />
                 <div>
-                  <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>Email</p>
+                  <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>{t.contactPage.email}</p>
                   <a href="mailto:contact@dakartransitauto.sn" className="font-semibold text-sm" style={{ color: COLORS.nuit, fontFamily: "var(--font-mono)" }}>contact@dakartransitauto.sn</a>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-4 rounded-sm border" style={{ borderColor: "rgba(27,58,92,0.1)" }}>
                 <MapPin size={20} className="mt-0.5" style={{ color: COLORS.indigo }} />
                 <div>
-                  <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>Adresse</p>
-                  <p className="font-semibold text-sm" style={{ color: COLORS.nuit }}>Rufisque, Dakar — Sénégal</p>
+                  <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>{t.contactPage.address}</p>
+                  <p className="font-semibold text-sm" style={{ color: COLORS.nuit }}>{t.contactPage.addressValue}</p>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 p-4 rounded-sm" style={{ background: COLORS.brume }}>
               <p className="text-xs" style={{ color: "#5A6B7D", fontFamily: "var(--font-mono)" }}>
-                DÉCLARANTE EN DOUANE · SÉNÉGAL<br />
-                Transit maritime · aérien · terrestre<br />
-                Import & vente de véhicules
+                {t.contactPage.badge}<br />
+                {t.contactPage.badgeLine2}<br />
+                {t.contactPage.badgeLine3}
               </p>
             </div>
           </div>
 
           {/* Contact form */}
           <div>
-            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>Formulaire de contact</p>
+            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)" }}>{t.contactPage.form.eyebrow}</p>
             <h2 className="text-xl font-bold mb-6" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
-              Envoyez-nous un message
+              {t.contactPage.form.title}
             </h2>
             {sent ? (
               <div className="p-6 rounded-sm text-center border" style={{ borderColor: COLORS.vert, background: "#f0faf8" }}>
                 <CheckCircle size={32} className="mx-auto mb-3" style={{ color: COLORS.vert }} />
-                <p className="font-semibold" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>Votre message a été ouvert dans WhatsApp.</p>
+                <p className="font-semibold" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{t.contactPage.form.sentTitle}</p>
                 <button onClick={() => { setSent(false); setForm({ nom: "", sujet: "", message: "" }); }} className="mt-4 text-sm underline" style={{ color: COLORS.indigo }}>
-                  Nouveau message
+                  {t.contactPage.form.newMessage}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {[
-                  { key: "nom", label: "Votre nom", placeholder: "Prénom et nom", type: "text" },
-                  { key: "sujet", label: "Sujet", placeholder: "Transit, achat véhicule, autre…", type: "text" },
+                  { key: "nom", label: t.contactPage.form.nameLabel, placeholder: t.contactPage.form.namePlaceholder, type: "text" },
+                  { key: "sujet", label: t.contactPage.form.subjectLabel, placeholder: t.contactPage.form.subjectPlaceholder, type: "text" },
                 ].map((f) => (
                   <div key={f.key}>
                     <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{f.label}</label>
@@ -1377,9 +1353,9 @@ function ContactPage() {
                   </div>
                 ))}
                 <div>
-                  <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>Message</label>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>{t.contactPage.form.messageLabel}</label>
                   <textarea
-                    placeholder="Décrivez votre besoin…"
+                    placeholder={t.contactPage.form.messagePlaceholder}
                     required
                     rows={5}
                     value={form.message}
@@ -1394,7 +1370,7 @@ function ContactPage() {
                   style={{ background: "#25D366", fontFamily: "var(--font-heading)" }}
                 >
                   <Send size={18} />
-                  Envoyer via WhatsApp
+                  {t.contactPage.form.submit}
                 </button>
               </form>
             )}
@@ -1407,7 +1383,8 @@ function ContactPage() {
 
 // ─── APP ──────────────────────────────────────────────────────────────────────
 
-export default function App() {
+function AppInner() {
+  const { t, lang } = useLang();
   const [page, setPage] = useState<Page>("home");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -1419,7 +1396,7 @@ export default function App() {
     setVehiclesError(null);
     listVehicles()
       .then((all) => setVehicles(all.filter((v) => !v.vendu)))
-      .catch(() => setVehiclesError("Impossible de charger le catalogue. Vérifiez votre connexion et réessayez."))
+      .catch(() => setVehiclesError(t.common.catalogError))
       .finally(() => setVehiclesLoading(false));
   };
 
@@ -1449,37 +1426,20 @@ export default function App() {
   }, [page, pendingAnchor]);
 
   useEffect(() => {
+    const vehicleTitle = selectedVehicle
+      ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee} — Transit Logistic International`
+      : "Véhicule — TLI";
+    const vehicleDesc = selectedVehicle
+      ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}, ${selectedVehicle.statut}, ${lang === "en" ? "imported from" : "importé depuis"} ${selectedVehicle.provenance}. ${fmtPrice(selectedVehicle.prix, lang)}.`
+      : "";
+
     const meta: Record<Page, { title: string; desc: string; keywords: string }> = {
-      home: {
-        title: "Transit Logistic International — Transit, Dédouanement & Vente de Véhicules à Dakar",
-        desc: "Déclarante en douane à Rufisque, Dakar. Transit maritime, aérien et terrestre. Import et vente de véhicules neufs et d'occasion. Réponse rapide sur WhatsApp.",
-        keywords: "transitaire Dakar, dédouanement Sénégal, transit maritime Dakar, vente voiture Dakar, import véhicule Sénégal, déclarante en douane Rufisque",
-      },
-      transit: {
-        title: "Transit & Dédouanement — Transit Logistic International",
-        desc: "Services de transit et dédouanement à Dakar : maritime, aérien, terrestre. Déclarante en douane professionnelle. Zones desservies : Sénégal, Mali, Burkina, Niger, Guinée.",
-        keywords: "transit douane Dakar, dédouanement marchandises Sénégal, commissionnaire douane Dakar, transit conteneur port Dakar, fret maritime aérien Sénégal",
-      },
-      vehicles: {
-        title: "Catalogue Véhicules — Import & Vente à Dakar | Transit Logistic International",
-        desc: "Achetez un véhicule neuf ou d'occasion importé directement à Dakar. Toyota, Mercedes, Hyundai, Peugeot et plus. Import sur commande disponible.",
-        keywords: "vente voiture Dakar, achat véhicule Sénégal, importation voiture Dakar, Toyota occasion Dakar, Mercedes Sénégal, véhicule neuf Rufisque",
-      },
-      "vehicle-detail": {
-        title: selectedVehicle ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee} — Transit Logistic International` : "Véhicule — TLI",
-        desc: selectedVehicle ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}, ${selectedVehicle.statut}, importé depuis ${selectedVehicle.provenance}. ${fmtPrice(selectedVehicle.prix)}.` : "",
-        keywords: "vente voiture Dakar, import véhicule Sénégal",
-      },
-      about: {
-        title: "À propos — Transit Logistic International | Rufisque, Sénégal",
-        desc: "Transit Logistic International, déclarante en douane basée à Rufisque. Transit et import de véhicules : une chaîne maîtrisée de bout en bout.",
-        keywords: "à propos transit Dakar, déclarante douane Rufisque, entreprise transit Sénégal",
-      },
-      contact: {
-        title: "Contact — Transit Logistic International | WhatsApp +221 77 520 86 35",
-        desc: "Contactez Transit Logistic International sur WhatsApp au +221 77 520 86 35. Basés à Rufisque, Dakar. Réponse rapide pour toute demande de transit ou de véhicule.",
-        keywords: "contact transitaire Dakar, WhatsApp transit Sénégal, téléphone dédouanement Dakar",
-      },
+      home: t.meta.home,
+      transit: t.meta.transit,
+      vehicles: t.meta.vehicles,
+      "vehicle-detail": { title: vehicleTitle, desc: vehicleDesc, keywords: t.meta["vehicle-detail"].keywords },
+      about: t.meta.about,
+      contact: t.meta.contact,
     };
 
     const { title, desc, keywords } = meta[page];
@@ -1497,11 +1457,11 @@ export default function App() {
     setMeta("og:title", title, true);
     setMeta("og:description", desc, true);
     setMeta("og:type", "website", true);
-    setMeta("og:locale", "fr_SN", true);
+    setMeta("og:locale", lang === "en" ? "en_US" : "fr_SN", true);
     setMeta("twitter:card", "summary");
     setMeta("twitter:title", title);
     setMeta("twitter:description", desc);
-  }, [page, selectedVehicle]);
+  }, [page, selectedVehicle, lang]);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: COLORS.blanc }}>
@@ -1531,5 +1491,13 @@ export default function App() {
       <Footer navigate={navigate} />
       <FloatingWA />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LangProvider>
+      <AppInner />
+    </LangProvider>
   );
 }
