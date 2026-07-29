@@ -70,7 +70,7 @@ export function AdminAccount() {
     setEmailSubmitting(false);
 
     if (updateError) {
-      setEmailError("Impossible de changer l'email. Réessayez.");
+      setEmailError(`Impossible de changer l'email : ${updateError.message}`);
       return;
     }
 
