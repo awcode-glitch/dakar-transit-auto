@@ -28,16 +28,6 @@ function ProvenanceBadge({ from }: { from: string }) {
   );
 }
 
-function SectionRouteLine() {
-  return (
-    <div className="flex items-center gap-3 py-6">
-      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: COLORS.indigo }} />
-      <div className="flex-1 border-t-2 border-dashed" style={{ borderColor: COLORS.ocre + "60" }} />
-      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: COLORS.ocre }} />
-    </div>
-  );
-}
-
 // ─── Floating WhatsApp ────────────────────────────────────────────────────────
 
 function FloatingWA() {
@@ -110,10 +100,6 @@ function Header({
           onClick={() => go("home")}
           className="flex items-center gap-3 focus:outline-none"
         >
-          <div
-            className="w-9 h-9 rounded flex-shrink-0"
-            style={{ background: COLORS.ocre }}
-          />
           <span
             className="text-xs sm:text-sm font-semibold tracking-wide text-white"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -207,10 +193,6 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div
-              className="w-9 h-9 rounded flex-shrink-0"
-              style={{ background: COLORS.ocre }}
-            />
             <span className="text-white font-semibold tracking-wide" style={{ fontFamily: "var(--font-heading)" }}>
               TRANSIT LOGISTIC INTERNATIONAL
             </span>
@@ -273,27 +255,6 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
 
 // ─── HOME PAGE ────────────────────────────────────────────────────────────────
 
-function HeroRouteLine() {
-  return (
-    <div className="relative flex items-center my-8 gap-3">
-      <style>{`
-        @keyframes expandRoute { from { width: 0; opacity: 0; } to { width: 100%; opacity: 1; } }
-        .route-line { animation: expandRoute 2s ease-out 0.5s forwards; width: 0; opacity: 0; }
-      `}</style>
-      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: COLORS.vert }} />
-      <div className="flex-1 relative h-0.5 overflow-hidden">
-        <div
-          className="route-line absolute inset-y-0 left-0 border-t-2 border-dashed"
-          style={{ borderColor: COLORS.ocre }}
-        />
-      </div>
-      <div className="flex-shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-sm text-xs font-semibold" style={{ background: COLORS.ocre, color: "#fff", fontFamily: "var(--font-mono)" }}>
-        Dakar
-      </div>
-    </div>
-  );
-}
-
 function HomePage({
   navigate,
   vehicles,
@@ -336,8 +297,6 @@ function HomePage({
           <p className="text-xl sm:text-2xl font-medium mb-2" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "var(--font-heading)", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
             {t.hero.subtitle}
           </p>
-
-          <HeroRouteLine />
 
           {/* Two CTA blocks */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -474,7 +433,6 @@ function HomePage({
               </div>
             ))}
           </div>
-          <SectionRouteLine />
         </div>
       </section>
 
@@ -523,9 +481,6 @@ function HomePage({
               </div>
             ))}
           </div>
-          <p className="text-center text-xs mt-6" style={{ color: "#A0AEC0", fontFamily: "var(--font-mono)" }}>
-            {t.stats.note}
-          </p>
         </div>
       </section>
     </main>
@@ -710,7 +665,6 @@ function TransitPage() {
               </div>
             ))}
           </div>
-          <SectionRouteLine />
         </div>
       </section>
 
@@ -1198,8 +1152,6 @@ function AboutPage({ navigate }: { navigate: (p: Page) => void }) {
             </div>
           </div>
         </div>
-
-        <SectionRouteLine />
 
         {/* Testimonials placeholder */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
