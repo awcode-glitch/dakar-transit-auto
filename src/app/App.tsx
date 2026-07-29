@@ -272,19 +272,19 @@ function HomePage({
     <main>
       {/* Hero */}
       <section
-        className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden"
+        className="relative min-h-[60vh] flex flex-col justify-center overflow-hidden"
         style={{ background: COLORS.nuit }}
       >
         <img
           src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&h=900&fit=crop&auto=format"
           alt="Port de conteneurs"
-          className="absolute inset-x-0 top-0 h-[65vh] sm:h-full w-full object-cover"
+          className="absolute inset-x-0 top-0 h-[50vh] sm:h-full w-full object-cover"
         />
         <div
           className="absolute inset-0"
           style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)" }}
         />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-14">
           <p
             className="inline-block text-xs tracking-widest uppercase mb-6 px-3 py-1.5 rounded-sm"
             style={{ color: COLORS.ocre, fontFamily: "var(--font-mono)", background: "rgba(0,0,0,0.55)" }}
