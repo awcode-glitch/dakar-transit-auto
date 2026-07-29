@@ -54,7 +54,7 @@ function LangSwitch({ compact }: { compact?: boolean }) {
   return (
     <div
       className="flex items-center rounded-sm overflow-hidden text-xs font-bold"
-      style={{ border: "1px solid rgba(16,27,45,0.2)", fontFamily: "var(--font-mono)" }}
+      style={{ border: "1px solid rgba(255,255,255,0.25)", fontFamily: "var(--font-mono)" }}
     >
       {(["fr", "en"] as const).map((l) => (
         <button
@@ -63,7 +63,7 @@ function LangSwitch({ compact }: { compact?: boolean }) {
           className={compact ? "px-2 py-1.5" : "px-2.5 py-1"}
           style={{
             background: lang === l ? COLORS.ocre : "transparent",
-            color: lang === l ? "#fff" : "rgba(16,27,45,0.6)",
+            color: lang === l ? "#fff" : "rgba(255,255,255,0.7)",
           }}
         >
           {l.toUpperCase()}
@@ -94,8 +94,8 @@ function Header({
 
   return (
     <header
-      className="sticky top-0 z-40"
-      style={{ background: "#fff", borderBottom: `3px solid ${COLORS.ocre}`, boxShadow: "0 2px 16px rgba(16,27,45,0.1)" }}
+      className="sticky top-0 z-40 shadow-md"
+      style={{ background: COLORS.indigo }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
@@ -104,8 +104,8 @@ function Header({
           className="flex items-center gap-3 focus:outline-none"
         >
           <span
-            className="text-xs sm:text-sm font-semibold tracking-wide"
-            style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}
+            className="text-xs sm:text-sm font-semibold tracking-wide text-white"
+            style={{ fontFamily: "var(--font-heading)" }}
           >
             TRANSIT LOGISTIC INTERNATIONAL
           </span>
@@ -120,7 +120,7 @@ function Header({
               className="text-sm font-medium transition-colors"
               style={{
                 fontFamily: "var(--font-heading)",
-                color: current === l.page ? COLORS.ocre : "rgba(16,27,45,0.65)",
+                color: current === l.page ? COLORS.ocre : "rgba(255,255,255,0.8)",
                 borderBottom: current === l.page ? `2px solid ${COLORS.ocre}` : "2px solid transparent",
                 paddingBottom: "2px",
               }}
@@ -143,8 +143,7 @@ function Header({
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-1"
-          style={{ color: COLORS.nuit }}
+          className="md:hidden text-white p-1"
           onClick={() => setOpen(!open)}
           aria-label="Menu"
         >
@@ -154,7 +153,7 @@ function Header({
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t" style={{ background: "#fff", borderColor: "rgba(16,27,45,0.08)" }}>
+        <div className="md:hidden border-t" style={{ background: COLORS.nuit, borderColor: "rgba(255,255,255,0.1)" }}>
           {links.map((l) => (
             <button
               key={l.page}
@@ -162,8 +161,8 @@ function Header({
               className="w-full text-left px-6 py-4 text-sm font-medium border-b"
               style={{
                 fontFamily: "var(--font-heading)",
-                color: current === l.page ? COLORS.ocre : "rgba(16,27,45,0.75)",
-                borderColor: "rgba(16,27,45,0.08)",
+                color: current === l.page ? COLORS.ocre : "rgba(255,255,255,0.85)",
+                borderColor: "rgba(255,255,255,0.08)",
               }}
             >
               {l.label}
