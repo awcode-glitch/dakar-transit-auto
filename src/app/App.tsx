@@ -276,7 +276,7 @@ function HomePage({
         style={{ background: COLORS.nuit }}
       >
         <img
-          src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&h=900&fit=crop&auto=format"
+          src="https://images.unsplash.com/photo-1751091764788-75cc6a39e9c6?w=1600&h=900&fit=crop&auto=format"
           alt="Port de conteneurs"
           className="absolute inset-x-0 top-0 h-[38vh] sm:h-full w-full object-cover"
         />
@@ -610,7 +610,7 @@ function TransitPage() {
       {/* Page hero */}
       <section className="relative py-20 overflow-hidden" style={{ background: COLORS.indigo }}>
         <img
-          src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1400&h=500&fit=crop&auto=format"
+          src="https://images.unsplash.com/photo-1751091764788-75cc6a39e9c6?w=1400&h=500&fit=crop&auto=format"
           alt="Port de Dakar"
           className="absolute inset-x-0 top-0 h-[45vh] sm:h-full w-full object-cover"
         />

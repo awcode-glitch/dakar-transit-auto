@@ -74,12 +74,11 @@ export const translations = {
     },
     stats: {
       items: [
-        { val: "—", unit: "ans", label: "d'expérience" },
-        { val: "—", unit: "dossiers", label: "dédouanés" },
+        { val: "15", unit: "ans", label: "d'expérience" },
+        { val: "100+", unit: "dossiers", label: "dédouanés" },
         { val: "—", unit: "véhicules", label: "livrés" },
         { val: "4", unit: "pays", label: "de la sous-région" },
       ],
-      note: "Chiffres à compléter — structure prête",
     },
     waBanner: {
       eyebrow: "Contact direct",
@@ -395,12 +394,11 @@ export const translations = {
     },
     stats: {
       items: [
-        { val: "—", unit: "years", label: "of experience" },
-        { val: "—", unit: "files", label: "cleared" },
+        { val: "15", unit: "years", label: "of experience" },
+        { val: "100+", unit: "files", label: "cleared" },
         { val: "—", unit: "vehicles", label: "delivered" },
         { val: "4", unit: "countries", label: "in the sub-region" },
       ],
-      note: "Figures to be completed — structure ready",
     },
     waBanner: {
       eyebrow: "Direct contact",
