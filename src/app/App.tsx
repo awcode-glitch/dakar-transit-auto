@@ -991,6 +991,8 @@ function VehicleDetailPage({
   navigate: (p: Page) => void;
 }) {
   const { t, lang } = useLang();
+  const [activePhoto, setActivePhoto] = useState(0);
+  const photos = vehicle.photos.length ? vehicle.photos : [vehicle.photo];
   const priceSuffix = vehicle.prix
     ? t.wa.vehiclePriceSuffix(vehicle.prix.toLocaleString(lang === "en" ? "en-US" : "fr-FR"))
     : "";
@@ -1014,11 +1016,26 @@ function VehicleDetailPage({
           <div>
             <div className="rounded-sm overflow-hidden bg-secondary aspect-video">
               <img
-                src={vehicle.photo}
+                src={photos[activePhoto] ?? photos[0]}
                 alt={`${vehicle.marque} ${vehicle.modele}`}
                 className="w-full h-full object-cover"
               />
             </div>
+            {photos.length > 1 && (
+              <div className="flex gap-2 mt-2">
+                {photos.map((url, i) => (
+                  <button
+                    key={url + i}
+                    onClick={() => setActivePhoto(i)}
+                    className="w-16 h-12 rounded-sm overflow-hidden bg-secondary border-2 flex-shrink-0"
+                    style={{ borderColor: i === activePhoto ? COLORS.ocre : "transparent" }}
+                    aria-label={`Photo ${i + 1}`}
+                  >
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="mt-3 flex items-center gap-3">
               <span
                 className="text-xs px-3 py-1 rounded-sm font-semibold"

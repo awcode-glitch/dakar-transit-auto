@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ChevronLeft, ImagePlus, Plus, Trash2, Loader2 } from "lucide-react";
+import { ChevronLeft, ImagePlus, Plus, Trash2, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
-import { getVehicle, createVehicle, updateVehicle, type VehicleInput } from "../../lib/vehicles";
+import { getVehicle, createVehicle, updateVehicle, uploadVehiclePhoto, type VehicleInput } from "../../lib/vehicles";
 import { resizeImageFile } from "../../lib/image";
 import { COLORS } from "../../lib/shared";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const MAX_PHOTO_MB = 15;
+const MAX_PHOTOS = 3;
+
+interface PhotoItem {
+  preview: string;
+  file?: File;
+  existingUrl?: string;
+}
 
 interface SpecRow {
   key: string;
@@ -60,9 +67,7 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
 
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [existingPhoto, setExistingPhoto] = useState<string | null>(null);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [loading, setLoading] = useState(mode === "edit");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -95,7 +100,7 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
             ? Object.entries(vehicle.specs).map(([key, value]) => ({ key, value }))
             : [{ key: "", value: "" }],
         });
-        setExistingPhoto(vehicle.photo);
+        setPhotos(vehicle.photos.map((url) => ({ preview: url, existingUrl: url })));
       } catch {
         setLoadError("Impossible de charger ce véhicule. Vérifiez votre connexion et réessayez.");
       } finally {
@@ -104,8 +109,9 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
     })();
   }, [mode, id]);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -118,8 +124,11 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
     }
 
     setErrors((prev) => ({ ...prev, photo: "" }));
-    setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
+    setPhotos((prev) => [...prev, { preview: URL.createObjectURL(file), file }].slice(0, MAX_PHOTOS));
+  };
+
+  const handlePhotoRemove = (index: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateSpec = (index: number, field: "key" | "value", value: string) => {
@@ -173,7 +182,7 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
     else if (form.description.trim().length < 20)
       errs.description = "Ajoutez une description plus complète (20 caractères minimum).";
 
-    if (mode === "create" && !photoFile) errs.photo = "Une photo est obligatoire pour un nouveau véhicule.";
+    if (photos.length === 0) errs.photo = "Au moins une photo est obligatoire.";
 
     return errs;
   };
@@ -207,14 +216,22 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
         specs,
       };
 
-      const finalPhoto = photoFile ? await resizeImageFile(photoFile) : undefined;
+      const finalPhotoUrls: string[] = [];
+      for (const p of photos) {
+        if (p.file) {
+          const resized = await resizeImageFile(p.file);
+          finalPhotoUrls.push(await uploadVehiclePhoto(resized));
+        } else if (p.existingUrl) {
+          finalPhotoUrls.push(p.existingUrl);
+        }
+      }
+      if (finalPhotoUrls.length === 0) throw new Error("Photo manquante");
 
       if (mode === "create") {
-        if (!finalPhoto) throw new Error("Photo manquante");
-        await createVehicle(input, finalPhoto);
+        await createVehicle(input, finalPhotoUrls);
         toast.success("Véhicule ajouté au catalogue.");
       } else if (id) {
-        await updateVehicle(id, input, finalPhoto);
+        await updateVehicle(id, input, finalPhotoUrls);
         toast.success("Véhicule mis à jour.");
       }
 
@@ -245,8 +262,6 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
     );
   }
 
-  const displayedPhoto = photoPreview ?? existingPhoto;
-
   return (
     <div className="max-w-2xl">
       <button
@@ -262,31 +277,50 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
       </h1>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
-        {/* Photo */}
+        {/* Photos */}
         <div>
           <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>
-            Photo du véhicule
+            Photos du véhicule ({photos.length}/{MAX_PHOTOS})
           </label>
-          <div className="flex items-center gap-4">
-            <div className="w-32 h-24 rounded-sm overflow-hidden bg-secondary border flex items-center justify-center flex-shrink-0" style={{ borderColor: "rgba(27,58,92,0.15)" }}>
-              {displayedPhoto ? (
-                <img src={displayedPhoto} alt="Aperçu" className="w-full h-full object-cover" />
-              ) : (
-                <ImagePlus size={24} style={{ color: "#A0AEC0" }} />
-              )}
-            </div>
-            <div>
-              <label
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-semibold cursor-pointer border transition-colors hover:bg-secondary"
-                style={{ borderColor: "rgba(27,58,92,0.2)", color: COLORS.indigo }}
+          <div className="flex items-center gap-4 flex-wrap">
+            {photos.map((p, i) => (
+              <div
+                key={i}
+                className="relative w-32 h-24 rounded-sm overflow-hidden bg-secondary border flex-shrink-0"
+                style={{ borderColor: "rgba(27,58,92,0.15)" }}
               >
-                <ImagePlus size={15} />
-                {existingPhoto || photoFile ? "Changer la photo" : "Choisir une photo"}
-                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+                <img src={p.preview} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => handlePhotoRemove(i)}
+                  className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center"
+                  style={{ background: "rgba(16,27,45,0.7)", color: "#fff" }}
+                  aria-label={`Supprimer la photo ${i + 1}`}
+                >
+                  <X size={14} />
+                </button>
+                {i === 0 && (
+                  <span
+                    className="absolute bottom-1 left-1 text-[10px] px-1.5 py-0.5 rounded-sm font-semibold"
+                    style={{ background: "rgba(16,27,45,0.7)", color: "#fff", fontFamily: "var(--font-mono)" }}
+                  >
+                    Principale
+                  </span>
+                )}
+              </div>
+            ))}
+            {photos.length < MAX_PHOTOS && (
+              <label
+                className="w-32 h-24 rounded-sm border border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 transition-colors hover:bg-secondary"
+                style={{ borderColor: "rgba(27,58,92,0.25)", color: COLORS.indigo }}
+              >
+                <ImagePlus size={20} />
+                <span className="text-xs font-medium">Ajouter</span>
+                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoAdd} />
               </label>
-              <p className="text-xs mt-2" style={{ color: "#A0AEC0" }}>JPG, PNG ou WebP — redimensionnée automatiquement.</p>
-            </div>
+            )}
           </div>
+          <p className="text-xs mt-2" style={{ color: "#A0AEC0" }}>JPG, PNG ou WebP — redimensionnées automatiquement. La première photo est utilisée comme photo principale.</p>
           {errors.photo && <p className="text-xs mt-1.5" style={{ color: "#b23b3b" }}>{errors.photo}</p>}
         </div>
 

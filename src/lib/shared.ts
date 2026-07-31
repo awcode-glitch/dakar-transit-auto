@@ -12,6 +12,7 @@ export interface Vehicle {
   vendu: boolean;
   provenance: string;
   photo: string;
+  photos: string[];
   description: string;
   specs: Record<string, string>;
   createdAt: string;

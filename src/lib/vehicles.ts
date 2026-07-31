@@ -13,6 +13,7 @@ interface VehicleRow {
   vendu: boolean;
   provenance: string;
   photo_url: string;
+  photos: string[] | null;
   description: string;
   specs: Record<string, string>;
   created_at: string;
@@ -33,6 +34,7 @@ export interface VehicleInput {
 }
 
 function fromRow(row: VehicleRow): Vehicle {
+  const photos = row.photos && row.photos.length ? row.photos : row.photo_url ? [row.photo_url] : [];
   return {
     id: row.id,
     marque: row.marque,
@@ -44,7 +46,8 @@ function fromRow(row: VehicleRow): Vehicle {
     statut: row.statut,
     vendu: row.vendu,
     provenance: row.provenance,
-    photo: row.photo_url,
+    photo: photos[0] ?? row.photo_url,
+    photos,
     description: row.description,
     specs: row.specs ?? {},
     createdAt: row.created_at,
@@ -88,10 +91,8 @@ export async function uploadVehiclePhoto(file: File): Promise<string> {
 
 export async function createVehicle(
   input: VehicleInput,
-  photoFile: File
+  photoUrls: string[]
 ): Promise<Vehicle> {
-  const photoUrl = await uploadVehiclePhoto(photoFile);
-
   const { data, error } = await supabase
     .from("vehicles")
     .insert({
@@ -105,7 +106,8 @@ export async function createVehicle(
       provenance: input.provenance,
       description: input.description,
       specs: input.specs,
-      photo_url: photoUrl,
+      photo_url: photoUrls[0],
+      photos: photoUrls,
       vendu: false,
     })
     .select("*")
@@ -118,10 +120,8 @@ export async function createVehicle(
 export async function updateVehicle(
   id: string,
   input: VehicleInput,
-  photoFile?: File
+  photoUrls?: string[]
 ): Promise<Vehicle> {
-  const photoUrl = photoFile ? await uploadVehiclePhoto(photoFile) : undefined;
-
   const { data, error } = await supabase
     .from("vehicles")
     .update({
@@ -135,7 +135,7 @@ export async function updateVehicle(
       provenance: input.provenance,
       description: input.description,
       specs: input.specs,
-      ...(photoUrl ? { photo_url: photoUrl } : {}),
+      ...(photoUrls ? { photo_url: photoUrls[0], photos: photoUrls } : {}),
     })
     .eq("id", id)
     .select("*")

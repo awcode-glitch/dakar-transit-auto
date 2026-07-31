@@ -63,3 +63,11 @@ create policy "Authenticated can update vehicle photos"
   on storage.objects for update
   to authenticated
   using (bucket_id = 'vehicle-photos');
+
+-- Multi-photo support (up to 3 photos per vehicle).
+-- Safe to re-run: additive only, backfills existing rows from photo_url.
+alter table public.vehicles add column if not exists photos text[] not null default '{}';
+
+update public.vehicles
+set photos = array[photo_url]
+where photo_url is not null and coalesce(array_length(photos, 1), 0) = 0;
