@@ -237,8 +237,10 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
 
       navigate("/admin/vehicules");
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      toast.error(`Erreur lors de l'enregistrement : ${message}`);
+      const e = err as { message?: string; details?: string; hint?: string } | null;
+      const message = e?.message || e?.details || e?.hint || String(err);
+      toast.error(`Erreur lors de l'enregistrement : ${message}`, { duration: 15000 });
+      console.error("Vehicle save error:", err);
     } finally {
       setSubmitting(false);
     }
