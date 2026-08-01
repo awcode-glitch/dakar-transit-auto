@@ -236,8 +236,9 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
       }
 
       navigate("/admin/vehicules");
-    } catch {
-      toast.error("Une erreur est survenue lors de l'enregistrement. Réessayez.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      toast.error(`Erreur lors de l'enregistrement : ${message}`);
     } finally {
       setSubmitting(false);
     }
