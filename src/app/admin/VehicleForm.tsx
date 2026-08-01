@@ -161,23 +161,23 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
       }
     }
 
-    if (!form.prixSurDemande) {
+    if (!form.prixSurDemande && form.prix.trim()) {
       const prix = Number(form.prix);
-      if (!form.prix.trim() || Number.isNaN(prix) || prix <= 0) {
-        errs.prix = "Indiquez un prix valide, ou cochez « Prix sur demande ».";
-      }
-
-      if (form.enPromo) {
-        const prixBarre = Number(form.prixBarre);
-        if (!form.prixBarre.trim() || Number.isNaN(prixBarre) || prixBarre <= 0) {
-          errs.prixBarre = "Indiquez l'ancien prix.";
-        } else if (!Number.isNaN(prix) && prixBarre <= prix) {
-          errs.prixBarre = "L'ancien prix doit être supérieur au prix promo.";
-        }
+      if (Number.isNaN(prix) || prix <= 0) {
+        errs.prix = "Indiquez un prix valide, ou laissez le champ vide.";
       }
     }
 
-    if (!form.provenance.trim()) errs.provenance = "La provenance est obligatoire.";
+    if (!form.prixSurDemande && form.enPromo) {
+      const prixBarre = Number(form.prixBarre);
+      const prix = Number(form.prix);
+      if (!form.prixBarre.trim() || Number.isNaN(prixBarre) || prixBarre <= 0) {
+        errs.prixBarre = "Indiquez l'ancien prix.";
+      } else if (form.prix.trim() && !Number.isNaN(prix) && prixBarre <= prix) {
+        errs.prixBarre = "L'ancien prix doit être supérieur au prix promo.";
+      }
+    }
+
     if (!form.description.trim()) errs.description = "La description est obligatoire.";
     else if (form.description.trim().length < 20)
       errs.description = "Ajoutez une description plus complète (20 caractères minimum).";
@@ -208,7 +208,7 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
         modele: form.modele.trim(),
         annee: Number(form.annee),
         kilometrage: form.neuf0km ? null : Number(form.kilometrage),
-        prix: form.prixSurDemande ? null : Number(form.prix),
+        prix: form.prixSurDemande || !form.prix.trim() ? null : Number(form.prix),
         prixBarre: form.prixSurDemande || !form.enPromo ? null : Number(form.prixBarre),
         statut: form.statut === "" ? null : form.statut,
         provenance: form.provenance.trim(),

@@ -16,6 +16,7 @@ type Page = "home" | "transit" | "vehicles" | "vehicle-detail" | "about" | "cont
 // ─── Shared Components ────────────────────────────────────────────────────────
 
 function ProvenanceBadge({ from }: { from: string }) {
+  if (!from.trim()) return null;
   return (
     <div className="flex items-center gap-2 text-xs" style={{ fontFamily: "var(--font-mono)", color: COLORS.ocre }}>
       <span className="text-muted-foreground">{from}</span>
@@ -1406,7 +1407,7 @@ function AppInner() {
       ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee} — Transit Logistic International`
       : "Véhicule — TLI";
     const vehicleDesc = selectedVehicle
-      ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}${selectedVehicle.statut ? `, ${selectedVehicle.statut}` : ""}, ${lang === "en" ? "imported from" : "importé depuis"} ${selectedVehicle.provenance}. ${fmtPrice(selectedVehicle.prix, lang)}.`
+      ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}${selectedVehicle.statut ? `, ${selectedVehicle.statut}` : ""}${selectedVehicle.provenance.trim() ? `, ${lang === "en" ? "imported from" : "importé depuis"} ${selectedVehicle.provenance}` : ""}. ${fmtPrice(selectedVehicle.prix, lang)}.`
       : "";
 
     const meta: Record<Page, { title: string; desc: string; keywords: string }> = {
