@@ -158,12 +158,14 @@ export function VehicleList() {
                   <p className="font-semibold text-sm truncate" style={{ fontFamily: "var(--font-heading)", color: COLORS.nuit }}>
                     {v.marque} {v.modele}
                   </p>
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-sm font-semibold"
-                    style={{ background: v.statut === "neuf" ? COLORS.vert : COLORS.indigo, color: "#fff" }}
-                  >
-                    {v.statut === "neuf" ? "Neuf" : "Occasion"}
-                  </span>
+                  {v.statut && (
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-sm font-semibold"
+                      style={{ background: v.statut === "neuf" ? COLORS.vert : COLORS.indigo, color: "#fff" }}
+                    >
+                      {v.statut === "neuf" ? "Neuf" : "Occasion"}
+                    </span>
+                  )}
                   {v.vendu && (
                     <span className="text-xs px-2 py-0.5 rounded-sm font-semibold" style={{ background: "#5A6B7D", color: "#fff" }}>
                       Vendu

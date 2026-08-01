@@ -8,7 +8,7 @@ export interface Vehicle {
   kilometrage: number | null;
   prix: number | null;
   prixBarre: number | null;
-  statut: "neuf" | "occasion";
+  statut: "neuf" | "occasion" | null;
   vendu: boolean;
   provenance: string;
   photo: string;

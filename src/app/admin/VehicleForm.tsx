@@ -25,7 +25,7 @@ interface FormState {
   marque: string;
   modele: string;
   annee: string;
-  statut: "neuf" | "occasion";
+  statut: "neuf" | "occasion" | "";
   neuf0km: boolean;
   kilometrage: string;
   prixSurDemande: boolean;
@@ -41,7 +41,7 @@ const emptyForm: FormState = {
   marque: "",
   modele: "",
   annee: String(CURRENT_YEAR),
-  statut: "neuf",
+  statut: "",
   neuf0km: true,
   kilometrage: "",
   prixSurDemande: false,
@@ -87,7 +87,7 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
           marque: vehicle.marque,
           modele: vehicle.modele,
           annee: String(vehicle.annee),
-          statut: vehicle.statut,
+          statut: vehicle.statut ?? "",
           neuf0km: vehicle.kilometrage == null,
           kilometrage: vehicle.kilometrage != null ? String(vehicle.kilometrage) : "",
           prixSurDemande: vehicle.prix == null,
@@ -210,7 +210,7 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
         kilometrage: form.neuf0km ? null : Number(form.kilometrage),
         prix: form.prixSurDemande ? null : Number(form.prix),
         prixBarre: form.prixSurDemande || !form.enPromo ? null : Number(form.prixBarre),
-        statut: form.statut,
+        statut: form.statut === "" ? null : form.statut,
         provenance: form.provenance.trim(),
         description: form.description.trim(),
         specs,
@@ -369,10 +369,11 @@ export function VehicleForm({ mode }: { mode: "create" | "edit" }) {
             <label className="block text-sm font-medium mb-1.5" style={{ color: COLORS.nuit, fontFamily: "var(--font-heading)" }}>Statut</label>
             <select
               value={form.statut}
-              onChange={(e) => setForm((f) => ({ ...f, statut: e.target.value as "neuf" | "occasion" }))}
+              onChange={(e) => setForm((f) => ({ ...f, statut: e.target.value as "neuf" | "occasion" | "" }))}
               className="w-full px-3 py-2.5 rounded-sm text-sm border outline-none"
               style={inputStyle()}
             >
+              <option value="">— Non précisé —</option>
               <option value="neuf">Neuf</option>
               <option value="occasion">Occasion</option>
             </select>

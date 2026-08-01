@@ -71,3 +71,10 @@ alter table public.vehicles add column if not exists photos text[] not null defa
 update public.vehicles
 set photos = array[photo_url]
 where photo_url is not null and coalesce(array_length(photos, 1), 0) = 0;
+
+-- Make "statut" optional (a vehicle can have no Neuf/Occasion status).
+-- Safe to re-run.
+alter table public.vehicles alter column statut drop not null;
+alter table public.vehicles drop constraint if exists vehicles_statut_check;
+alter table public.vehicles add constraint vehicles_statut_check
+  check (statut is null or statut in ('neuf', 'occasion'));

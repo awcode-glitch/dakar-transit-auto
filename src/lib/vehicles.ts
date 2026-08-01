@@ -9,7 +9,7 @@ interface VehicleRow {
   kilometrage: number | null;
   prix: number | null;
   prix_barre: number | null;
-  statut: "neuf" | "occasion";
+  statut: "neuf" | "occasion" | null;
   vendu: boolean;
   provenance: string;
   photo_url: string;
@@ -27,7 +27,7 @@ export interface VehicleInput {
   kilometrage: number | null;
   prix: number | null;
   prixBarre: number | null;
-  statut: "neuf" | "occasion";
+  statut: "neuf" | "occasion" | null;
   provenance: string;
   description: string;
   specs: Record<string, string>;

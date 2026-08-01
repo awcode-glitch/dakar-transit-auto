@@ -517,16 +517,18 @@ function VehicleCard({
           alt={`${vehicle.marque} ${vehicle.modele}`}
           className="w-full h-full object-cover transition-transform group-hover:scale-105"
         />
-        <span
-          className="absolute top-3 left-3 text-xs px-2 py-1 rounded-sm font-semibold"
-          style={{
-            background: vehicle.statut === "neuf" ? COLORS.vert : COLORS.indigo,
-            color: "#fff",
-            fontFamily: "var(--font-mono)",
-          }}
-        >
-          {vehicle.statut === "neuf" ? t.vehicleCard.neuf : t.vehicleCard.occasion}
-        </span>
+        {vehicle.statut && (
+          <span
+            className="absolute top-3 left-3 text-xs px-2 py-1 rounded-sm font-semibold"
+            style={{
+              background: vehicle.statut === "neuf" ? COLORS.vert : COLORS.indigo,
+              color: "#fff",
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            {vehicle.statut === "neuf" ? t.vehicleCard.neuf : t.vehicleCard.occasion}
+          </span>
+        )}
         {hasPromo(vehicle) && (
           <span
             className="absolute top-3 right-3 text-xs px-2 py-1 rounded-sm font-bold"
@@ -1037,12 +1039,14 @@ function VehicleDetailPage({
               </div>
             )}
             <div className="mt-3 flex items-center gap-3">
-              <span
-                className="text-xs px-3 py-1 rounded-sm font-semibold"
-                style={{ background: vehicle.statut === "neuf" ? COLORS.vert : COLORS.indigo, color: "#fff", fontFamily: "var(--font-mono)" }}
-              >
-                {vehicle.statut === "neuf" ? t.vehicleCard.neuf : t.vehicleCard.occasion}
-              </span>
+              {vehicle.statut && (
+                <span
+                  className="text-xs px-3 py-1 rounded-sm font-semibold"
+                  style={{ background: vehicle.statut === "neuf" ? COLORS.vert : COLORS.indigo, color: "#fff", fontFamily: "var(--font-mono)" }}
+                >
+                  {vehicle.statut === "neuf" ? t.vehicleCard.neuf : t.vehicleCard.occasion}
+                </span>
+              )}
               <ProvenanceBadge from={vehicle.provenance} />
               {hasPromo(vehicle) && (
                 <span
@@ -1402,7 +1406,7 @@ function AppInner() {
       ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee} — Transit Logistic International`
       : "Véhicule — TLI";
     const vehicleDesc = selectedVehicle
-      ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}, ${selectedVehicle.statut}, ${lang === "en" ? "imported from" : "importé depuis"} ${selectedVehicle.provenance}. ${fmtPrice(selectedVehicle.prix, lang)}.`
+      ? `${selectedVehicle.marque} ${selectedVehicle.modele} ${selectedVehicle.annee}${selectedVehicle.statut ? `, ${selectedVehicle.statut}` : ""}, ${lang === "en" ? "imported from" : "importé depuis"} ${selectedVehicle.provenance}. ${fmtPrice(selectedVehicle.prix, lang)}.`
       : "";
 
     const meta: Record<Page, { title: string; desc: string; keywords: string }> = {
